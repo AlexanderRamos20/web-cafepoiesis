@@ -11,7 +11,6 @@ const urls = [
     "https://www.instagram.com/p/CiEEbxEs5uB/",
     "https://www.instagram.com/p/DPP9mxkjdyW/",
 ]
-
 function App() {
     const location = useLocation(); 
 
