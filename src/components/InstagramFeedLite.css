@@ -1,0 +1,84 @@
+/* === Contenedor principal del feed === */
+.ig-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+}
+
+/* === Tarjeta individual del post === */
+.ig-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: scale(0.88);
+  transform-origin: top center;
+  max-width: 300px;
+  max-height: 500px;        /* 🔹 limita la altura */
+  overflow: hidden;         /* corta el contenido que se sale */
+}
+
+.ig-card:hover {
+  transform: scale(0.91);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+/* === Ajuste del embed de Instagram === */
+.ig-card .instagram-media,
+.ig-card iframe {
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  background: #fff !important;
+  border-radius: 10px;
+  transform: scaleY(0.9);       /* 🔹 aplasta verticalmente el iframe */
+  transform-origin: top center; /* mantiene el encuadre */
+}
+
+/* === Skeleton temporal mientras cargan === */
+.ig-skeleton {
+  width: 300px;
+  height: 340px;  /* más corto */
+  border-radius: 10px;
+  background: linear-gradient(90deg, #ececec 25%, #f7f7f7 50%, #ececec 75%);
+  background-size: 400% 100%;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* === Título y estilos de la sección === */
+.app-title {
+  text-align: center;
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-weight: 600;
+  font-size: 1.5rem;
+  color: #3b2f2f; /* tono café oscuro */
+  margin: 2rem 0 1rem;
+}
+
+/* === Responsivo === */
+@media (max-width: 768px) {
+  .ig-card {
+    max-width: 90%;
+    transform: scale(0.9);
+    max-height: 420px; /* un poco más corta en móvil */
+  }
+}
+
+@media (min-width: 1024px) {
+  .ig-wrap {
+    justify-content: space-evenly;
+  }
+}
