@@ -42,7 +42,7 @@ const Header = () => {
               <a className="nav-link text-coffee-dark mx-3" href="#link">Menú</a>
               <a className="nav-link text-coffee-dark mx-3" href="#link">Insumos</a>
               <Link className="nav-link text-coffee-dark mx-3" to="/#seccion-cafes-grano">Cafés</Link>
-              <a className="nav-link text-coffee-dark mx-3" href="#link">Instagram</a>
+              <a className="nav-link text-coffee-dark mx-3" href="https://www.instagram.com/cafepoiesis/">Instagram</a>
             </div>
 
             <div className="navbar-nav ms-auto">
