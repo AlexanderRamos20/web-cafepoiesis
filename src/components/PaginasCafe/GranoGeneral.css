@@ -1,0 +1,63 @@
+.cafes-page-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 2rem 0; 
+}
+
+.coffee-list {
+    display: flex;
+    justify-content: center;
+    gap: 40px; 
+    flex-wrap: wrap; 
+    margin-top: 30px;
+}
+
+.coffee-card-link {
+    flex-basis: calc(50% - 20px); 
+    max-width: 550px; 
+    text-decoration: none;
+    color: inherit;
+    display: block; 
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s;
+}
+
+.coffee-card {
+    display: flex;
+    flex-direction: column; 
+    text-align: center;
+    
+    border: 1px solid #ccc; 
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 100%; 
+    cursor: pointer; 
+    background-color: #f9f9f9; 
+    color: #333; 
+}
+
+.coffee-image {
+    width: 300px; /* 👈 Ancho de la imagen (tamaño deseado para el cuadrado) */
+    height: 300px; /* 👈 Altura de la imagen (igual al ancho para que sea cuadrada) */
+    object-fit: cover; /* 👈 Asegura que la imagen cubra el área cuadrada y se recorte si es necesario */
+    display: block;
+    
+    margin: 0 auto 20px auto; /* 👈 Centra la imagen horizontalmente dentro de la tarjeta */
+    
+    border-radius: 8px; /* 👈 Bordes redondeados en todas las esquinas */
+    background-color: #e0e0e0; 
+}
+
+.price {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #4CAF50;
+    margin-top: 5px;
+    padding-bottom: 10px;
+}
+
+.coffee-card-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}

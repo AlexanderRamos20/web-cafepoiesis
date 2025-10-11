@@ -3,6 +3,7 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { Link } from 'react-router-dom';
 
 
 const Header = () => {
@@ -35,7 +36,7 @@ const Header = () => {
                             <a className="nav-link text-coffee-dark mx-3" href="#home">Cómo llegar</a>
                             <a className="nav-link text-coffee-dark mx-3" href="#link">Menú</a>
                             <a className="nav-link text-coffee-dark mx-3" href="#link">Insumos</a>
-                            <a className="nav-link text-coffee-dark mx-3" href="#link">Cafés</a>
+                            <Link className="nav-link text-coffee-dark mx-3" to="/cafes">Cafés</Link>
                             <a className="nav-link text-coffee-dark mx-3" href="#link">Instagram</a>
                         </div>
                         
