@@ -36,7 +36,7 @@ const Header = () => {
                             <a className="nav-link text-coffee-dark mx-3" href="#link">Menú</a>
                             <a className="nav-link text-coffee-dark mx-3" href="#link">Insumos</a>
                             <a className="nav-link text-coffee-dark mx-3" href="#link">Cafés</a>
-                            <a className="nav-link text-coffee-dark mx-3" href="https://www.instagram.com/cafepoiesis/">Instagram</a>
+                            <a className="nav-link text-coffee-dark mx-3" href="#link">Instagram</a>
                         </div>
                         
                         {/* Para desplegar formulario de contacto */}
