@@ -4,7 +4,7 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 
-const Header = () => {
+const Header = ({ onMenuClick, onInstagramClick }) => {
   return (
     <header className="sticky-top shadow-sm">
       <nav className="navbar navbar-expand-lg navbar-dark bg-coffee-accent">
@@ -39,10 +39,10 @@ const Header = () => {
           <div className="collapse navbar-collapse" id="basic-navbar-nav">
             <div className="navbar-nav me-auto fs-5">
               <a className="nav-link text-coffee-dark mx-3" href="#home">Cómo llegar</a>
-              <a className="nav-link text-coffee-dark mx-3" href="#link">Menú</a>
+              <button className="nav-link text-coffee-dark mx-3 btn btn-link" onClick={onMenuClick}>Menú</button>
               <a className="nav-link text-coffee-dark mx-3" href="#link">Insumos</a>
               <Link className="nav-link text-coffee-dark mx-3" to="/#seccion-cafes-grano">Cafés</Link>
-              <a className="nav-link text-coffee-dark mx-3" href="https://www.instagram.com/cafepoiesis/">Instagram</a>
+              <button className="nav-link text-coffee-dark mx-3 btn btn-link" onClick={onInstagramClick}>Instagram</button>
             </div>
 
             <div className="navbar-nav ms-auto">
