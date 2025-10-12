@@ -4,6 +4,7 @@ import InstagramFeedLite from './components/InstagramFeedLite.jsx';
 import Header from './components/header.jsx';
 import BurbujaContacto from './components/BurbujaContaco.jsx';
 import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx'; 
+import Mapa from './components/map.jsx';
 
 const urls = [
     "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -30,6 +31,7 @@ function App() {
     return(
         <>
             <Header/>
+            <Mapa/>
             <main className='app-main'>
                 
                 <section id="seccion-cafes-grano">
