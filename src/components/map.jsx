@@ -1,5 +1,7 @@
 
 function Mapa() {
+    const MAPS_API_KEY = import.meta.env.VITE_MAPS_API_KEY;
+    const googleMapsSrc = `https://www.google.com/maps/embed/v1/place?q=place_id:ChIJD4GwnDzvFZYRDnGvzZUIOxE&key=${MAPS_API_KEY}`
     return (
         <section className="container">
             <div className="row d-flex align-items-center"> 
@@ -13,7 +15,7 @@ function Mapa() {
                         allowFullScreen 
                         referrerPolicy="no-referrer-when-downgrade" /* Buena práctica de seguridad */
                     
-                        src="https://www.google.com/maps/embed/v1/place?q=place_id:ChIJD4GwnDzvFZYRDnGvzZUIOxE&key=AIzaSyAgQ8_hudJnNtRjzvwxKFQeWnmzcWpCHrw">
+                        src={googleMapsSrc} >
                     </iframe>
                 </div>
 
@@ -24,8 +26,7 @@ function Mapa() {
                         <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Sábados: <span className="fw-bold">15:00 - 19:00</span></p>
                         <p className="fs-5 mb-0 text-danger"><i className="bi bi-calendar-x me-2"></i>Domingos: <span className="fw-bold">Cerrado</span></p>
                     </div>
-</div>
-
+                </div>
             </div>
         </section>
     );
