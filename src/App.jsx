@@ -1,5 +1,6 @@
 import InstagramFeedLite from './components/InstagramFeedLite.jsx';
 import Header from './components/header.jsx';
+import BurbujaContacto from './components/BurbujaContaco.jsx';
 
 const urls = [
     "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -18,6 +19,7 @@ function App() {
                 columns = {{base:1, md:3, lg:3}}
                 />
             </main>
+            <BurbujaContacto/>
         </>
     );
 }
