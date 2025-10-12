@@ -19,14 +19,13 @@ function Mapa() {
 
                 <div className="col-md-6 text-center p-4 border rounded shadow-sm h-100 d-flex flex-column justify-content-center">
                     <h3 className='mb-4 fw-bold'> Horario de atención </h3>
-                    <div className="text-start mx-auto w-auto"> {/* Contenedor para alinear el texto a la izquierda sin afectar al h3 */}
+                    <div className="text-start mx-auto w-auto"> 
                         <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Lunes a Viernes: <span className="fw-bold">10:00 - 19:00</span></p>
                         <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Sábados: <span className="fw-bold">15:00 - 19:00</span></p>
                         <p className="fs-5 mb-0 text-danger"><i className="bi bi-calendar-x me-2"></i>Domingos: <span className="fw-bold">Cerrado</span></p>
                     </div>
 </div>
 
-/* Nota: Cambié col-md-6 a col-md-4 para que coincida con tu estructura original de 8 + 4 = 12 */
             </div>
         </section>
     );
