@@ -1,6 +1,7 @@
 import InstagramFeedLite from './components/InstagramFeedLite.jsx';
 import Header from './components/header.jsx';
 import BurbujaContacto from './components/BurbujaContaco.jsx';
+import Mapa from './components/map.jsx';
 
 const urls = [
     "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -11,6 +12,7 @@ function App() {
     return(
         <>
             <Header/>
+            <Mapa/>
             <main className='app-main'>
                 <h2 className='app-title'>Lo ultimo en nuestro instagram ☕</h2>
                 <InstagramFeedLite
