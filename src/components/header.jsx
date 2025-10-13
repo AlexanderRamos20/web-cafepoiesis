@@ -2,15 +2,16 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
+import { Link } from 'react-router-dom';
 
 const Header = ({ onMenuClick, onInstagramClick }) => {
   return (
     <header className="sticky-top shadow-sm">
       <nav className="navbar navbar-expand-lg navbar-dark bg-coffee-accent">
         <div className="container">
-          <a className="navbar-brand fs-3 fw-bold text-coffee-primary" href="#home">
+          <Link className="navbar-brand fs-3 fw-bold text-coffee-primary" to="/">
             <img
-              src="logo-cafepoiesis.jpg"
+              src="/logo-cafepoiesis.jpg"
               alt="Logo Café Poiesis"
               width="30"
               height="auto"
@@ -21,7 +22,7 @@ const Header = ({ onMenuClick, onInstagramClick }) => {
               }}
             />
             Café Poiesis
-          </a>
+          </Link>
 
           <button
             className="navbar-toggler"
@@ -40,7 +41,7 @@ const Header = ({ onMenuClick, onInstagramClick }) => {
               <a className="nav-link text-coffee-dark mx-3" href="#home">Cómo llegar</a>
               <button className="nav-link text-coffee-dark mx-3 btn btn-link" onClick={onMenuClick}>Menú</button>
               <a className="nav-link text-coffee-dark mx-3" href="#link">Insumos</a>
-              <a className="nav-link text-coffee-dark mx-3" href="#link">Cafés</a>
+              <Link className="nav-link text-coffee-dark mx-3" to="/#seccion-cafes-grano">Cafés</Link>
               <button className="nav-link text-coffee-dark mx-3 btn btn-link" onClick={onInstagramClick}>Instagram</button>
             </div>
 
