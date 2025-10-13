@@ -1,10 +1,14 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 
-const Header = ({ onMenuClick, onInstagramClick }) => {
+const Header = () => {
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <header className="sticky-top shadow-sm">
       <nav className="navbar navbar-expand-lg navbar-dark bg-coffee-accent">
@@ -39,10 +43,31 @@ const Header = ({ onMenuClick, onInstagramClick }) => {
           <div className="collapse navbar-collapse" id="basic-navbar-nav">
             <div className="navbar-nav me-auto fs-5">
               <a className="nav-link text-coffee-dark mx-3" href="#home">Cómo llegar</a>
-              <button className="nav-link text-coffee-dark mx-3 btn btn-link" onClick={onMenuClick}>Menú</button>
-              <a className="nav-link text-coffee-dark mx-3" href="#link">Insumos</a>
-              <Link className="nav-link text-coffee-dark mx-3" to="/#seccion-cafes-grano">Cafés</Link>
-              <button className="nav-link text-coffee-dark mx-3 btn btn-link" onClick={onInstagramClick}>Instagram</button>
+
+              <button
+                className="nav-link text-coffee-dark mx-3 btn btn-link"
+                onClick={() => scrollToSection('menu-consumo')}
+              >
+                Menú
+              </button>
+
+              <button
+                className="nav-link text-coffee-dark mx-3 btn btn-link"
+                onClick={() => scrollToSection('seccion-insumos')}
+              >
+                Insumos
+              </button>
+
+              <Link className="nav-link text-coffee-dark mx-3" to="/#seccion-cafes-grano">
+                Cafés
+              </Link>
+
+              <button
+                className="nav-link text-coffee-dark mx-3 btn btn-link"
+                onClick={() => scrollToSection('seccion-instagram')}
+              >
+                Instagram
+              </button>
             </div>
 
             <div className="navbar-nav ms-auto">
