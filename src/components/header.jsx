@@ -1,86 +1,85 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 
 const Header = () => {
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
+    const headerOffset = 80;
     if (section) {
-      section.scrollIntoView({ behavior: 'smooth' });
+        const elementPosition = section.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - headerOffset;
+        window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+        });
     }
   };
 
   return (
     <header className="sticky-top shadow-sm">
-      <nav className="navbar navbar-expand-lg navbar-dark bg-coffee-accent">
-        <div className="container">
-          <Link className="navbar-brand fs-3 fw-bold text-coffee-primary" to="/">
+      <Navbar expand="lg" bg="dark" variant="dark" className="bg-coffee-accent">
+        <Container>
+          {/* Marca */}
+          <Navbar.Brand
+            onClick={() => scrollToSection('home')}
+            className="fs-3 fw-bold text-coffee-primary d-flex align-items-center"
+            style={{ cursor: 'pointer' }}
+          >
             <img
               src="/logo-cafepoiesis.jpg"
               alt="Logo Café Poiesis"
               width="30"
-              height="auto"
+              height="30"
               className="me-2 rounded-circle"
               onError={(e) => {
-                e.target.onerror = null;
                 e.target.src = 'https://placehold.co/30x30/4e342e/ffffff?text=CP';
               }}
             />
-            Café Poiesis
-          </Link>
+            CaféPoiesis
+          </Navbar.Brand>
 
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#basic-navbar-nav"
-            aria-controls="basic-navbar-nav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-          <div className="collapse navbar-collapse" id="basic-navbar-nav">
-            <div className="navbar-nav me-auto fs-5">
-              <a className="nav-link text-coffee-dark mx-3" href="#home">Cómo llegar</a>
-
-              <button
-                className="nav-link text-coffee-dark mx-3 btn btn-link"
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto fs-5">
+            <Nav.Link
                 onClick={() => scrollToSection('menu-consumo')}
-              >
+                className="text-coffee-dark mx-3"
+            >
                 Menú
-              </button>
+            </Nav.Link>
 
-              <button
-                className="nav-link text-coffee-dark mx-3 btn btn-link"
+            <Nav.Link
                 onClick={() => scrollToSection('seccion-insumos')}
-              >
+                className="text-coffee-dark mx-3"
+            >
                 Insumos
-              </button>
+            </Nav.Link>
 
-              <Link className="nav-link text-coffee-dark mx-3" to="/#seccion-cafes-grano">
+            <Nav.Link
+                onClick={() => scrollToSection('seccion-cafes-grano')}
+                className="text-coffee-dark mx-3"
+            >
                 Cafés
-              </Link>
+            </Nav.Link>
 
-              <button
-                className="nav-link text-coffee-dark mx-3 btn btn-link"
+            <Nav.Link
+                onClick={() => scrollToSection('mapa')}
+                className="text-coffee-dark mx-3"
+            >
+                Cómo llegar
+            </Nav.Link>
+
+            <Nav.Link
                 onClick={() => scrollToSection('seccion-instagram')}
-              >
+                className="text-coffee-dark mx-3"
+            >
                 Instagram
-              </button>
-            </div>
+            </Nav.Link>
+            </Nav>
 
-            <div className="navbar-nav ms-auto">
-              <button
-                className="btn btn-sm btn-coffee-primary rounded-pill px-4"
-                onClick={() => console.log('Abrir Contacto')}
-              >
-                Contacto
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
     </header>
   );
 };

@@ -7,6 +7,7 @@ import BurbujaContacto from './components/BurbujaContaco.jsx';
 import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx';
 import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
+import Footer from './components/footer.jsx';
 
 const urls = [
   "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -42,16 +43,16 @@ function App() {
       <Header />
 
       <main className="app-main">
-        <section id="seccion-cafes-grano">
-          <GranoGeneral />
-        </section>
-
         <section id="menu-consumo">
           <MenuConsumo />
         </section>
 
         <section id="seccion-insumos">
           <Insumos />
+        </section>
+
+        <section id="seccion-cafes-grano">
+          <GranoGeneral />
         </section>
 
         <section id="seccion-instagram">
@@ -62,8 +63,16 @@ function App() {
             columns={{ base: 1, md: 3, lg: 3 }}
           />
         </section>
+        
+        <section id="mapa">
+          <Mapa/>
+        </section>
+
+        <section>
+            <Footer/>
+        </section>
+      
       </main>
-      <Mapa/>
       <BurbujaContacto />
     </>
   );
