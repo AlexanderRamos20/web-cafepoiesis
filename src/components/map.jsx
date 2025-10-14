@@ -8,7 +8,7 @@ function Mapa() {
                 <div className="col-md-6">
                     <h2 className='app-title text-center'> Cómo llegar 🗺️ </h2>
                     <iframe 
-                        width="600" 
+                        width="415" 
                         height="300" 
                         style={{ border: 0 }} 
                         loading="lazy" 

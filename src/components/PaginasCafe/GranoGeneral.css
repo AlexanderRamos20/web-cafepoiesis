@@ -34,11 +34,11 @@
 }
 
 .carousel-control-prev {
-    left: -80px; 
+    left: 0; 
 }
 
 .carousel-control-next {
-    right: -80px; 
+    right: 0; 
 }
 
 .carousel-control-prev-icon,

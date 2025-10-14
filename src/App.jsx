@@ -40,7 +40,6 @@ function App() {
   return (
     <>
       <Header />
-      <Mapa />
 
       <main className="app-main">
         <section id="seccion-cafes-grano">
@@ -64,7 +63,7 @@ function App() {
           />
         </section>
       </main>
-
+      <Mapa/>
       <BurbujaContacto />
     </>
   );
