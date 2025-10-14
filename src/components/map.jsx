@@ -5,10 +5,10 @@ function Mapa() {
     return (
         <section className="container">
             <div className="row d-flex align-items-center"> 
-                <div className="col-md-6">
-                    <h2 className='app-title text-center'> Cómo llegar 🗺️ </h2>
+                <div className="col-md-6 mb-4 mb-md-0">
+                    <h2 className='app-title text-center mb-4'> Cómo llegar 🗺️ </h2>
                     <iframe 
-                        width="600" 
+                        width="100%" 
                         height="300" 
                         style={{ border: 0 }} 
                         loading="lazy" 
@@ -19,14 +19,16 @@ function Mapa() {
                     </iframe>
                 </div>
 
-                <div className="col-md-6 text-center p-4 border rounded shadow-sm h-100 d-flex flex-column justify-content-center">
-                    <h3 className='mb-4 fw-bold'> Horario de atención </h3>
-                    <div className="text-start mx-auto w-auto"> 
-                        <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Lunes a Viernes: <span className="fw-bold">10:00 - 19:00</span></p>
-                        <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Sábados: <span className="fw-bold">15:00 - 19:00</span></p>
-                        <p className="fs-5 mb-0 text-danger"><i className="bi bi-calendar-x me-2"></i>Domingos: <span className="fw-bold">Cerrado</span></p>
+                <div className="col-md-6">
+                    <div className="text-center p-4 border rounded shadow-sm h-100 d-flex flex-column justify-content-center">
+                        <h3 className='mb-4 fw-bold'> Horario de atención </h3>
+                        <div className="text-start mx-auto w-auto"> 
+                            <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Lunes a Viernes: <span className="fw-bold">10:00 - 19:00</span></p>
+                            <p className="fs-5 mb-2"><i className="bi bi-calendar-check me-2 text-success"></i>Sábados: <span className="fw-bold">15:00 - 19:00</span></p>
+                            <p className="fs-5 mb-0 text-danger"><i className="bi bi-calendar-x me-2"></i>Domingos: <span className="fw-bold">Cerrado</span></p>
+                        </div>
                     </div>
-                </div>
+                 </div>
             </div>
         </section>
     );
