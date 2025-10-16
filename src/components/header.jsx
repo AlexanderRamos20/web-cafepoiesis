@@ -1,4 +1,4 @@
-import { Navbar, Nav, Container, Button } from 'react-bootstrap';
+import { Navbar, Nav, Container } from 'react-bootstrap';
 
 const Header = () => {
   const scrollToSection = (id) => {
@@ -17,12 +17,15 @@ const Header = () => {
   return (
     <header className="sticky-top shadow-sm">
       <Navbar expand="lg" bg="dark" variant="dark" className="bg-coffee-accent">
-        <Container>
-          {/* Marca */}
+        {/* Usamos un Container fluid para que ocupe todo el ancho */}
+        <Container fluid className="position-relative">
+          
+          {/* Marca (Logo) */}
           <Navbar.Brand
             onClick={() => scrollToSection('home')}
             className="fs-3 fw-bold text-coffee-primary d-flex align-items-center"
-            style={{ cursor: 'pointer' }}
+            // Movemos el logo a la izquierda con un poco de padding
+            style={{ cursor: 'pointer', paddingLeft: '1rem' }} 
           >
             <img
               src="/logo-cafepoiesis.jpg"
@@ -39,45 +42,35 @@ const Header = () => {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto fs-5">
-            <Nav.Link
-                onClick={() => scrollToSection('menu-consumo')}
-                className="text-coffee-dark mx-3"
-            >
-                Menú
-            </Nav.Link>
-
-            <Nav.Link
-                onClick={() => scrollToSection('seccion-insumos')}
-                className="text-coffee-dark mx-3"
-            >
-                Insumos
-            </Nav.Link>
-
-            <Nav.Link
-                onClick={() => scrollToSection('seccion-cafes-grano')}
-                className="text-coffee-dark mx-3"
-            >
-                Cafés
-            </Nav.Link>
-
-            <Nav.Link
-                onClick={() => scrollToSection('mapa')}
-                className="text-coffee-dark mx-3"
-            >
-                Cómo llegar
-            </Nav.Link>
-
-            <Nav.Link
-                onClick={() => scrollToSection('seccion-instagram')}
-                className="text-coffee-dark mx-3"
-            >
-                Instagram
-            </Nav.Link>
+          {/* Contenedor de los enlaces */}
+          {/* Con 'justify-content-center' centramos el contenido */}
+          <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
+            <Nav className="fs-5">
+              <Nav.Link onClick={() => scrollToSection('menu-consumo')} className="text-coffee-dark mx-3">
+                  Menú
+              </Nav.Link>
+              <Nav.Link onClick={() => scrollToSection('seccion-preparaciones')} className="text-coffee-dark mx-3">
+                  Preparaciones
+              </Nav.Link>
+              <Nav.Link onClick={() => scrollToSection('seccion-insumos')} className="text-coffee-dark mx-3">
+                  Insumos
+              </Nav.Link>
+              <Nav.Link onClick={() => scrollToSection('seccion-cafes-grano')} className="text-coffee-dark mx-3">
+                  Cafés
+              </Nav.Link>
+              <Nav.Link onClick={() => scrollToSection('mapa')} className="text-coffee-dark mx-3">
+                  Cómo llegar
+              </Nav.Link>
+              <Nav.Link onClick={() => scrollToSection('seccion-instagram')} className="text-coffee-dark mx-3">
+                  Instagram
+              </Nav.Link>
             </Nav>
-
           </Navbar.Collapse>
+
+          {/* Elemento invisible para balancear el espacio del logo y lograr un centrado perfecto */}
+          {/* Lo ocultamos en la vista móvil para que no interfiera */}
+          <div className="d-none d-lg-block" style={{ width: '170px' }}></div>
+
         </Container>
       </Navbar>
     </header>

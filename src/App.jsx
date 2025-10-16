@@ -1,3 +1,5 @@
+// Contenido modificado para: src/App.jsx
+
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './components/header.jsx';
@@ -8,6 +10,7 @@ import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx';
 import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
+import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo componente
 
 const urls = [
   "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -24,6 +27,7 @@ function App() {
       '#menu-consumo': 'menu-consumo',
       '#seccion-instagram': 'seccion-instagram',
       '#seccion-insumos': 'seccion-insumos',
+      '#seccion-preparaciones': 'seccion-preparaciones', // 3. AÑADE el ID para el scroll
     };
 
     const targetId = scrollTargets[location.hash];
@@ -45,6 +49,11 @@ function App() {
       <main className="app-main">
         <section id="menu-consumo">
           <MenuConsumo />
+        </section>
+
+        {/* 2. AÑADE la nueva sección de preparaciones aquí */}
+        <section id="seccion-preparaciones">
+          <Preparaciones />
         </section>
 
         <section id="seccion-insumos">
