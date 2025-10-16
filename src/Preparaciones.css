@@ -1,5 +1,3 @@
-/* Contenido para: src/Preparaciones.css */
-
 .preparaciones-page-content {
     max-width: 1200px;
     margin: 0 auto;
@@ -16,14 +14,12 @@
     margin-bottom: 2rem;
 }
 
-/* Replicamos el estilo del contenedor del carrusel de GranoGeneral.css */
 .preparaciones-page-content .carousel-container-wrapper {
     position: relative;
     max-width: 1000px; 
     margin: 0 auto; 
 }
 
-/* Replicamos el estilo de las tarjetas de GranoGeneral.css */
 .preparacion-card {
     display: flex;
     flex-direction: column; 
@@ -56,7 +52,6 @@
     margin-bottom: 5px;
 }
 
-/* Opcional: Si quieres que los botones de control se vean como en GranoGeneral.css */
 .preparaciones-page-content .carousel-control-prev,
 .preparaciones-page-content .carousel-control-next {
     background-color: white; 
@@ -71,4 +66,20 @@
 .preparaciones-page-content .carousel-control-prev-icon,
 .preparaciones-page-content .carousel-control-next-icon {
     filter: invert(1);
+}
+
+@media (max-width: 768px) {
+  .preparacion-image {
+    width: 150px; 
+    height: 150px; 
+  }
+
+  .preparacion-card {
+    padding: 10px;
+  }
+  
+  .preparaciones-page-content .carousel-container-wrapper {
+    max-width: 100%;
+    padding: 0 1rem;
+  }
 }
