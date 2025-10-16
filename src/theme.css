@@ -4,8 +4,9 @@
     --coffee-light: #f5f5f5; /* Crema */
     --coffee-dark: #241616; /* Marrón muy Oscuro */
     
-    /* Nota: También podrías definir el font-family aquí */
-    --bs-font-sans-serif: 'Inter', sans-serif;
+    /* --- LÍNEA MODIFICADA --- */
+    /* Establecemos la nueva fuente como la fuente base de Bootstrap */
+    --bs-font-sans-serif: 'Source Serif Pro', serif; 
 }
 
 
@@ -21,5 +22,10 @@
     color: var(--coffee-dark) !important; 
 }
 
-
-
+/* --- REGLA AÑADIDA PARA LA NEGRI TA --- */
+/* Hacemos que los títulos, el menú y otros elementos importantes sean negrita */
+h1, h2, h3, h4, h5, h6,
+.navbar .nav-link,
+.fw-bold {
+    font-weight: 700 !important; /* '700' es negrita */
+}

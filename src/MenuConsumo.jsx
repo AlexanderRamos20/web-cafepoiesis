@@ -1,48 +1,27 @@
-import './MenuConsumo.css';
-import expresoImg from './img/expreso.jpg';
-import brownieImg from './img/brownie.jpg';
-import barraChocolateImg from './img/barra_chocolate.jpg';
-
-const productos = [
-  {
-    nombre: 'Espresso',
-    descripcion: 'Intenso y aromático',
-    precio: '$2.000',
-    categoria: 'Café preparado',
-    imagen: expresoImg
-  },
-  {
-    nombre: 'Brownie',
-    descripcion: 'Clásico, húmedo y delicioso. Ideal para acompañar tu café.',
-    precio: '$1.800',
-    categoria: 'Pastelería',
-    imagen: brownieImg
-  },
-  {
-    nombre: 'Barra de Chocolate Bogo 70%',
-    descripcion: 'Chocolate ecuatoriano 70% cacao. Bean to Bar artesanal.',
-    precio: '$5.900',
-    categoria: 'Chocolates Bean to Bar',
-    imagen: barraChocolateImg
-  },
-];
+import React from 'react';
 
 function MenuConsumo() {
+  const nombreDelArchivoPDF = "carta-2022-verano-1.pdf"; 
+
   return (
-    <section className="menu-consumo">
-      <h2>Menú de Consumo Directo</h2>
-      <div className="productos">
-        {productos.map((item, index) => (
-          <div key={index} className="producto">
-            <img src={item.imagen} alt={item.nombre} className="producto-img" />
-            <h3>{item.nombre}</h3>
-            <p>{item.descripcion}</p>
-            <span className="precio">{item.precio}</span>
-            <p className="categoria">{item.categoria}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+    // --- CAMBIO 1: Aumentamos el padding superior de 40px a 70px ---
+    <div className="menu-container" style={{ textAlign: 'center', padding: '70px 20px' }}>
+      <a 
+        href={`/${nombreDelArchivoPDF}`} 
+        download
+        className="enlace-descarga" 
+        style={{
+          // --- CAMBIO 2: Aumentamos el tamaño de la fuente de 1.2em a 1.4em ---
+          fontSize: '1.4em', 
+          color: '#4a2c2a',   
+          textDecoration: 'underline',
+          cursor: 'pointer',
+          fontWeight: 'bold'
+        }}
+      >
+        Haz click aqui para descargar la carta completa
+      </a>
+    </div>
   );
 }
 
