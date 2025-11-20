@@ -1,66 +1,106 @@
-import './Insumos.css';
+import React from 'react';
+import { Carousel, Row, Col, Button } from 'react-bootstrap'; 
+import './Insumos.css'; 
+import { addToCart, removeFromCart } from './firebaseCartService'; 
 import aeropressImg from './img/aeropress.jpg';
 import molinoImg from './img/molino.jpg';
 import filtrosV60Img from './img/filtros-v60.jpg';
 import filtrosAeropressImg from './img/filtros-aeropress.jpg';
 
+
+const chunkArray = (array, size) => {
+    const chunkedArr = [];
+    for (let i = 0; i < array.length; i += size) {
+        chunkedArr.push(array.slice(i, i + size));
+    }
+    return chunkedArr;
+};
+
+const handleAdd = (item) => {
+    addToCart(item.id, item.nombre, 1); 
+    alert(`¡${item.nombre} añadido!`);
+    window.dispatchEvent(new Event('cartUpdated')); 
+};
+
+const handleRemove = (item) => {
+    removeFromCart(item.id); 
+    alert(`¡${item.nombre} quitado del carro!`);
+    window.dispatchEvent(new Event('cartUpdated')); 
+};
+
+
+const CarouselContent = ({ items, carouselId }) => (
+    <Carousel 
+        interval={null} 
+        indicators={false} 
+        wrap={true} 
+    >
+        {items.map((chunk, slideIndex) => (
+            <Carousel.Item key={slideIndex}>
+                <Row className="justify-content-center g-4"> 
+                    {chunk.map((item) => (
+                        <Col xs={12} md={4} key={item.id} className="d-flex justify-content-center">
+                            <div className="card h-100 card-insumo"> 
+                                <img src={item.imagen} className="card-img-top producto-img" alt={item.nombre} />
+                                <div className="card-body text-center d-flex flex-column p-2">
+                                    <h5 className="card-title fs-6">{item.nombre}</h5>
+                                    
+                                    <p className="card-text text-muted fst-italic small mt-auto">{item.subCategoria}</p>
+                                    <p className="card-text fw-bold">{item.precio}</p>
+                                    
+                                    <div className='d-grid gap-2'>
+                                        <Button 
+                                            variant="success" 
+                                            onClick={() => handleAdd(item)}
+                                            style={{ backgroundColor: '#4e342e', borderColor: '#4e342e' }} 
+                                            className="btn-sm"
+                                        >
+                                            + Añadir al Carro
+                                        </Button>
+                                        <Button 
+                                            variant="outline-secondary" 
+                                            onClick={() => handleRemove(item)}
+                                            className="btn-sm"
+                                        >
+                                            - Quitar Ítem
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+                    ))}
+                </Row>
+            </Carousel.Item>
+        ))}
+    </Carousel>
+);
+
 const productos = [
-  {
-    nombre: 'Aeropress Clear Morada',
-    descripcion: 'Morada. Vienen con filtros incluidos.',
-    precio: '$59.500',
-    subCategoria: 'Cafetera',
-    imagen: aeropressImg
-  },
-  {
-    nombre: 'Molino Hario Zebrang',
-    descripcion: 'Muelas de acero inoxidable.',
-    precio: '$59.500',
-    subCategoria: 'Accesorio',
-    imagen: molinoImg
-  },
-  {
-    nombre: 'Filtros V60 (40 unidades)',
-    descripcion: 'Tamaño 01 o 02. Paquete de 40 unidades.',
-    precio: '$4.000',
-    subCategoria: 'Filtros', 
-    imagen: filtrosV60Img
-  },
-  {
-    nombre: 'Filtros Aeropress (350 unidades)',
-    descripcion: 'Filtros circulares para Aeropress.',
-    precio: '$12.000',
-    subCategoria: 'Filtros', 
-    imagen: filtrosAeropressImg
-  },
+    { id: 101, nombre: 'Aeropress Clear', precio: '$59.500', subCategoria: 'Cafetera', imagen: aeropressImg },
+    { id: 102, nombre: 'Molino Hario Zebrang', precio: '$59.500', subCategoria: 'Accesorio', imagen: molinoImg },
+    { id: 103, nombre: 'Filtros V60', precio: '$4.000', subCategoria: 'Filtros', imagen: filtrosV60Img },
+    { id: 104, nombre: 'Filtros Aeropress', precio: '$12.000', subCategoria: 'Filtros', imagen: filtrosAeropressImg },
 ];
 
 function Insumos() {
-  return (
-    <section id="seccion-insumos" className="insumos container py-5">
-      <h2 className="text-center">Insumos y Accesorios</h2>
-      
-      <div className="row justify-content-center g-3 g-md-4 mt-2">
-        {productos.map((item, index) => (
-          <div key={index} className="col-6 col-md-auto">
-            <div className="card h-100 card-insumo">
-              <img src={item.imagen} className="card-img-top producto-img" alt={item.nombre} />
-              <div className="card-body text-center d-flex flex-column p-2">
-                <h5 className="card-title fs-6">{item.nombre}</h5>
-                
-                {item.subCategoria && (
-                  <p className="card-text text-muted fst-italic small">{item.subCategoria}</p>
-                )}
+    const insumosMobile = chunkArray(productos, 1);
+    const insumosDesktop = chunkArray(productos, 3);
 
-                <p className="card-text small d-none d-md-block">{item.descripcion}</p>
-                <p className="card-text fw-bold mt-auto">{item.precio}</p>
-              </div>
+    return (
+        <section id="seccion-insumos" className="insumos container py-5">
+            <h2 className="text-center">Insumos y Accesorios</h2>
+            
+            <div className="carousel-container-wrapper">
+                <div className="d-md-none">
+                    <CarouselContent items={insumosMobile} carouselId="carouselInsumosMobile" />
+                </div>
+                
+                <div className="d-none d-md-block">
+                    <CarouselContent items={insumosDesktop} carouselId="carouselInsumosDesktop" />
+                </div>
             </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+        </section>
+    );
 }
 
 export default Insumos;

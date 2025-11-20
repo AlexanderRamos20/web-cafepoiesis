@@ -1,28 +1,44 @@
 import React from 'react';
 
 function MenuConsumo() {
-  const nombreDelArchivoPDF = "carta-2022-verano-1.pdf"; 
+    const nombreDelArchivoPDF = "carta-2022-verano-1.pdf"; 
 
-  return (
-    // --- CAMBIO 1: Aumentamos el padding superior de 40px a 70px ---
-    <div className="menu-container" style={{ textAlign: 'center', padding: '70px 20px' }}>
-      <a 
-        href={`/${nombreDelArchivoPDF}`} 
-        download
-        className="enlace-descarga" 
-        style={{
-          // --- CAMBIO 2: Aumentamos el tamaño de la fuente de 1.2em a 1.4em ---
-          fontSize: '1.4em', 
-          color: '#4a2c2a',   
-          textDecoration: 'underline',
-          cursor: 'pointer',
-          fontWeight: 'bold'
-        }}
-      >
-        Haz click aqui para descargar la carta completa
-      </a>
-    </div>
-  );
+    return (
+        <div className="menu-container text-center py-5">
+            <h2 className="app-title mb-4" style={{ color: '#4e342e' }}>¿Necesitas ver todos los precios?</h2>
+            
+            <div 
+                className="card shadow-lg mx-auto p-4 d-flex flex-column align-items-center" 
+                style={{ maxWidth: '400px', backgroundColor: '#fff8f2', border: '2px solid #a1887f' }}
+            >
+                <span style={{ fontSize: '3rem', color: '#a1887f', marginBottom: '1rem' }}>📄</span>
+                
+                <h3 className="fs-5 mb-3 fw-bold" style={{ color: '#241616' }}>
+                    Descarga nuestra Carta Completa
+                </h3>
+                
+                <p className="text-muted small mb-3">
+                    Incluye todas nuestras preparaciones, insumos, y lista de precios detallada. (Formato PDF)
+                </p>
+
+                <a 
+                    href={`/${nombreDelArchivoPDF}`} 
+                    download
+                    className="btn btn-primary btn-lg" 
+                    style={{
+                        backgroundColor: '#4e342e',
+                        borderColor: '#4e342e',
+                        fontWeight: 'bold',
+                        transition: 'background-color 0.3s'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.backgroundColor = '#241616'}
+                    onMouseOut={e => e.currentTarget.style.backgroundColor = '#4e342e'}
+                >
+                    Descargar PDF
+                </a>
+            </div>
+        </div>
+    );
 }
 
 export default MenuConsumo;

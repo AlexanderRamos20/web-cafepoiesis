@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Button, Modal, Form, FloatingLabel, Toast, ToastContainer } from "react-bootstrap";
+// Importar la función para guardar el formulario de contacto en la BD (futuro)
+// import { saveContactForm } from '../firebaseService'; 
 
-export default function BurbujaContacto(){
+export default function BurbujaContactoGeneral(){
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarToast, setMostrarToast] = useState(false);
 
@@ -9,33 +11,37 @@ export default function BurbujaContacto(){
     const cerrarModal= () => setMostrarModal(false);
     const enviarFormulario = (e) => {
         e.preventDefault();
+        
+        // TODO: En la Unidad 3, aquí se debe implementar la llamada a la BD (tabla formulario_contacto)
+        
         setMostrarModal(false);
         setMostrarToast(true);
-        e.target.reset();
+        e.target.reset(); // Limpia el formulario
     };
 
     return(
         <>
-            {/**burbuja flotante */}
-            <button onClick={abrirModal} variant="primary"
-            className="position-fixed bottom-0 start-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+            {/* Burbuja Flotante de Contacto General (Lado Derecho) */}
+            <button onClick={abrirModal} 
+            className="position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
             style={{
                 width: 64,
                 height: 64,
                 zIndex: 1050,
-                backgroundColor: "#a1887f",
+                backgroundColor: "#4e342e", // Marrón oscuro para diferenciar del carrito
                 border: "none",
+                cursor: "pointer",
             }}
-            aria-label={"Contacto"}
-            title="Contacto"
+            aria-label={"Contacto General"}
+            title="Formulario de Contacto"
             >
-                <span style={{fontSize: 24}}>💬</span>
+                <span style={{fontSize: 24, color: 'white'}}>📧</span>
             </button>
 
-            {/**formulario dentro del modal */}
+            {/* Formulario Modal (RF11) */}
             <Modal show={mostrarModal} onHide={cerrarModal} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Formulario de contacto</Modal.Title>
+                    <Modal.Title>Formulario de Contacto Empresarial</Modal.Title>
                 </Modal.Header>
                 <Form onSubmit={enviarFormulario}>
                     <Modal.Body>
@@ -50,9 +56,9 @@ export default function BurbujaContacto(){
                             </FloatingLabel>
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="Categoria">
-                            <FloatingLabel label="Categoria">
+                            <FloatingLabel label="Categoría de Consulta">
                                 <Form.Select required>
-                                    <option value={"consulta"}>Consulta</option>
+                                    <option value={"b2b"}>Consulta B2B / Mayorista</option>
                                     <option value={"reclamo"}>Reclamo</option>
                                     <option value={"otro"}>Otro</option>
                                 </Form.Select>
@@ -71,18 +77,18 @@ export default function BurbujaContacto(){
                     </Modal.Body>
                     <Modal.Footer>
                         <Button variant="secondary" onClick={cerrarModal}>Cancelar</Button>
-                        <Button type="submit" variant="primary">Enviar</Button>
+                        <Button type="submit" variant="primary" style={{ backgroundColor: '#a1887f', borderColor: '#a1887f' }}>Enviar</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
 
-            {/**notificacion de envio exitoso */}
-            <ToastContainer position="bottom-start" className="p-3">
+            {/* Notificación de envío exitoso */}
+            <ToastContainer position="bottom-end" className="p-3">
                 <Toast onClose={() => setMostrarToast(false)} show={mostrarToast} delay= {2500} autohide bg="success">
                     <Toast.Header closeButton={false}>
                         <strong className="me-auto">Café Poiesis</strong>
                     </Toast.Header>
-                    <Toast.Body className="text-white">✅Mensaje enviado correctamente✅</Toast.Body>
+                    <Toast.Body className="text-white">✅ Mensaje enviado correctamente ✅</Toast.Body>
                 </Toast>
             </ToastContainer>
         </>

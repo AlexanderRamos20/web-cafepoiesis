@@ -1,16 +1,15 @@
-// Contenido modificado para: src/App.jsx
-
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './components/header.jsx';
 import InstagramFeedLite from './components/InstagramFeedLite.jsx';
 import MenuConsumo from './MenuConsumo.jsx';
-import BurbujaContacto from './components/BurbujaContaco.jsx';
+import BurbujaCarrito from './components/BurbujaCarrito.jsx'; 
+import BurbujaContactoGeneral from './components/BurbujaContactoGeneral.jsx'; 
 import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx';
 import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
-import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo componente
+import Preparaciones from './Preparaciones.jsx'; 
 
 const urls = [
   "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -27,7 +26,8 @@ function App() {
       '#menu-consumo': 'menu-consumo',
       '#seccion-instagram': 'seccion-instagram',
       '#seccion-insumos': 'seccion-insumos',
-      '#seccion-preparaciones': 'seccion-preparaciones', // 3. AÑADE el ID para el scroll
+      '#seccion-preparaciones': 'seccion-preparaciones', 
+      '#mapa': 'mapa', 
     };
 
     const targetId = scrollTargets[location.hash];
@@ -47,11 +47,7 @@ function App() {
       <Header />
 
       <main className="app-main">
-        <section id="menu-consumo">
-          <MenuConsumo />
-        </section>
-
-        {/* 2. AÑADE la nueva sección de preparaciones aquí */}
+        
         <section id="seccion-preparaciones">
           <Preparaciones />
         </section>
@@ -64,7 +60,12 @@ function App() {
           <GranoGeneral />
         </section>
 
-        <section id="seccion-instagram">
+        {/* CARTA PDF (Ahora debajo de Cafés de Grano) */}
+        <section id="menu-consumo" className="pt-2 pb-5"> 
+          <MenuConsumo />
+        </section>
+
+        <section id="seccion-instagram" className="py-5">
           <h2 className="app-title">Lo último en nuestro Instagram ☕</h2>
           <InstagramFeedLite
             urls={urls}
@@ -73,16 +74,18 @@ function App() {
           />
         </section>
         
-        <section id="mapa">
+        <section id="mapa" className="py-5">
           <Mapa/>
         </section>
 
         <section>
-            <Footer/>
+          <Footer/>
         </section>
       
       </main>
-      <BurbujaContacto />
+      
+      <BurbujaCarrito />
+      <BurbujaContactoGeneral />
     </>
   );
 }
