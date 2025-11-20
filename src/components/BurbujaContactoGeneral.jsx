@@ -21,9 +21,9 @@ export default function BurbujaContactoGeneral(){
 
     return(
         <>
-            {/* Burbuja Flotante de Contacto General (Lado Derecho) */}
+            {/* Burbuja Flotante de Contacto General (Lado IZQUIERDO) */}
             <button onClick={abrirModal} 
-            className="position-fixed bottom-0 end-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
+            className="position-fixed bottom-0 start-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
             style={{
                 width: 64,
                 height: 64,
@@ -33,7 +33,7 @@ export default function BurbujaContactoGeneral(){
                 cursor: "pointer",
             }}
             aria-label={"Contacto General"}
-            title="Formulario de Contacto"
+            title="Formulario de Contacto Empresarial"
             >
                 <span style={{fontSize: 24, color: 'white'}}>📧</span>
             </button>

@@ -56,17 +56,22 @@ function App() {
           <Insumos />
         </section>
 
-        <section id="seccion-cafes-grano">
+        {/* 1. CAFÉS DE GRANO: Quitamos margen inferior (mb-0) y padding inferior (pb-0) */}
+        <section id="seccion-cafes-grano" className="mb-0 pb-0">
           <GranoGeneral />
         </section>
 
-        {/* CARTA PDF (Ahora debajo de Cafés de Grano) */}
-        <section id="menu-consumo" className="pt-2 pb-5"> 
+        {/* 2. MENÚ DE CONSUMO (LA CARTA): 
+            - pt-2: Muy poquito espacio arriba (casi pegado a Cafés)
+            - pb-2: Muy poquito espacio abajo (casi pegado a Instagram)
+        */}
+        <section id="menu-consumo" className="py-2"> 
           <MenuConsumo />
         </section>
 
-        <section id="seccion-instagram" className="py-5">
-          <h2 className="app-title">Lo último en nuestro Instagram ☕</h2>
+        {/* 3. INSTAGRAM: Quitamos padding superior (pt-0) para que suba hacia el menú */}
+        <section id="seccion-instagram" className="pt-0 pb-5">
+          <h2 className="app-title mt-4">Lo último en nuestro Instagram ☕</h2>
           <InstagramFeedLite
             urls={urls}
             limit={3}
@@ -79,7 +84,7 @@ function App() {
         </section>
 
         <section>
-          <Footer/>
+            <Footer/>
         </section>
       
       </main>
