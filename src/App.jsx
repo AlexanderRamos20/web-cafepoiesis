@@ -3,22 +3,18 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './components/header.jsx';
-import InstagramFeedLite from './components/InstagramFeedLite.jsx';
+import InstagramFeedLite from './components/InstagramFeed.jsx';
+import { useInstagramMedia } from "./hooks/instagramMedia";
 import MenuConsumo from './MenuConsumo.jsx';
 import BurbujaContacto from './components/BurbujaContaco.jsx';
 import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx';
 import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
-import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo componente
-
-const urls = [
-  "https://www.instagram.com/p/DFao3gnxQhB/",
-  "https://www.instagram.com/p/CiEEbxEs5uB/",
-  "https://www.instagram.com/p/DPP9mxkjdyW/",
-];
+import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo component
 
 function App() {
+  const { media, loading, error } = useInstagramMedia(3);
   const location = useLocation();
 
   useEffect(() => {
@@ -65,9 +61,16 @@ function App() {
         </section>
 
         <section id="seccion-instagram">
-          <h2 className="app-title">Lo último en nuestro Instagram ☕</h2>
+          <h2 className="insta-title" id="instagram-feed">
+            Lo último en nuestro instagram ☕
+          </h2>
+          {error && (
+            <p className="error-ig">Error al cargar Instagram: {error}</p>
+          )}
+
           <InstagramFeedLite
-            urls={urls}
+            media={media}
+            loading={loading}
             limit={3}
             columns={{ base: 1, md: 3, lg: 3 }}
           />
