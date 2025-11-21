@@ -67,7 +67,7 @@ function App() {
 
         {/* 3. INSTAGRAM: Quitamos padding superior (pt-0) para que suba hacia el menú */}
         <section id="seccion-instagram" className="pt-0 pb-5">
-          <h2 className="app-title mt-4">Lo último en nuestro Instagram ☕</h2>
+          <h2 className="insta-title mt-4">Lo último en nuestro Instagram ☕</h2>
           <InstagramFeedLite
             media={media}
             loading={loading}
