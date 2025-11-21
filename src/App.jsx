@@ -1,16 +1,15 @@
-// Contenido modificado para: src/App.jsx
-
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './components/header.jsx';
 import InstagramFeedLite from './components/InstagramFeedLite.jsx';
 import MenuConsumo from './MenuConsumo.jsx';
-import BurbujaContacto from './components/BurbujaContaco.jsx';
+import BurbujaCarrito from './components/BurbujaCarrito.jsx'; 
+import BurbujaContactoGeneral from './components/BurbujaContactoGeneral.jsx'; 
 import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx';
 import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
-import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo componente
+import Preparaciones from './Preparaciones.jsx'; 
 
 const urls = [
   "https://www.instagram.com/p/DFao3gnxQhB/",
@@ -27,7 +26,8 @@ function App() {
       '#menu-consumo': 'menu-consumo',
       '#seccion-instagram': 'seccion-instagram',
       '#seccion-insumos': 'seccion-insumos',
-      '#seccion-preparaciones': 'seccion-preparaciones', // 3. AÑADE el ID para el scroll
+      '#seccion-preparaciones': 'seccion-preparaciones', 
+      '#mapa': 'mapa', 
     };
 
     const targetId = scrollTargets[location.hash];
@@ -47,11 +47,7 @@ function App() {
       <Header />
 
       <main className="app-main">
-        <section id="menu-consumo">
-          <MenuConsumo />
-        </section>
-
-        {/* 2. AÑADE la nueva sección de preparaciones aquí */}
+        
         <section id="seccion-preparaciones">
           <Preparaciones />
         </section>
@@ -60,12 +56,22 @@ function App() {
           <Insumos />
         </section>
 
-        <section id="seccion-cafes-grano">
+        {/* 1. CAFÉS DE GRANO: Quitamos margen inferior (mb-0) y padding inferior (pb-0) */}
+        <section id="seccion-cafes-grano" className="mb-0 pb-0">
           <GranoGeneral />
         </section>
 
-        <section id="seccion-instagram">
-          <h2 className="app-title">Lo último en nuestro Instagram ☕</h2>
+        {/* 2. MENÚ DE CONSUMO (LA CARTA): 
+            - pt-2: Muy poquito espacio arriba (casi pegado a Cafés)
+            - pb-2: Muy poquito espacio abajo (casi pegado a Instagram)
+        */}
+        <section id="menu-consumo" className="py-2"> 
+          <MenuConsumo />
+        </section>
+
+        {/* 3. INSTAGRAM: Quitamos padding superior (pt-0) para que suba hacia el menú */}
+        <section id="seccion-instagram" className="pt-0 pb-5">
+          <h2 className="app-title mt-4">Lo último en nuestro Instagram ☕</h2>
           <InstagramFeedLite
             urls={urls}
             limit={3}
@@ -73,7 +79,7 @@ function App() {
           />
         </section>
         
-        <section id="mapa">
+        <section id="mapa" className="py-5">
           <Mapa/>
         </section>
 
@@ -82,7 +88,9 @@ function App() {
         </section>
       
       </main>
-      <BurbujaContacto />
+      
+      <BurbujaCarrito />
+      <BurbujaContactoGeneral />
     </>
   );
 }

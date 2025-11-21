@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { Row, Col, Button, Form, Accordion } from 'react-bootstrap'; 
+
+// IMPORTACIONES DE COMPONENTES
+// Nota: ".." sube un nivel (a src/components/)
 import Header from '../header.jsx';
 import Footer from '../footer.jsx';
-import { Row, Col, Button, Form, Accordion } from 'react-bootstrap'; 
+import BurbujaCarrito from '../BurbujaCarrito'; 
+
+// IMPORTACIÓN DEL SERVICIO
+// Nota: "../.." sube dos niveles (a src/)
+import { addToCart } from '../../firebaseCartService'; 
 
 const mockCoffeeDetails = {
     1: { 
@@ -31,10 +39,44 @@ const mockCoffeeDetails = {
     },
 };
 
-
 export default function CafeDetalle() {
     const { cafeId } = useParams();
     const coffee = mockCoffeeDetails[cafeId];
+
+    // --- ESTADOS DEL FORMULARIO ---
+    const [cantidad, setCantidad] = useState(1);
+    const [tamano, setTamano] = useState(""); 
+    const [molienda, setMolienda] = useState(""); 
+    
+    // --- ESTADO PARA ANIMACIÓN DEL BOTÓN ---
+    const [isAdded, setIsAdded] = useState(false); 
+
+    const handleAddToCart = () => {
+        // 1. Validaciones
+        if (!tamano || tamano === "Elija una opción") {
+            alert("⚠️ Por favor, selecciona un tamaño.");
+            return;
+        }
+        if (!molienda || molienda === "Elija una opción") {
+            alert("⚠️ Por favor, selecciona la molienda.");
+            return;
+        }
+
+        // 2. Preparar datos para el carrito
+        const uniqueId = `${cafeId}-${tamano}-${molienda}`;
+        const fullName = `${coffee.name} (${tamano}, ${molienda})`;
+
+        // 3. Enviar al servicio
+        addToCart(uniqueId, fullName, cantidad);
+
+        // 4. Activar animación de confirmación
+        setIsAdded(true);
+        
+        // 5. Restaurar botón después de 1.5 segundos
+        setTimeout(() => {
+            setIsAdded(false);
+        }, 1500);
+    };
 
     if (!coffee) {
         return (
@@ -42,7 +84,6 @@ export default function CafeDetalle() {
                 <Header />
                 <div style={{ padding: '80px', textAlign: 'center' }}>
                     <h2>Error: Café no encontrado</h2>
-                    <p>La página de detalles para este producto no existe.</p>
                     <Link to="/"><Button variant="primary">Volver al Menú</Button></Link>
                 </div>
                 <Footer />
@@ -56,12 +97,11 @@ export default function CafeDetalle() {
             <main style={{ maxWidth: '1200px', margin: '40px auto', padding: '20px' }}>
                 
                 <Link to="/" style={{ display: 'inline-block', marginBottom: '20px', textDecoration: 'none' }}>
-                    <Button variant="outline-secondary">
-                        ← Volver al Menú
-                    </Button>
+                    <Button variant="outline-secondary">← Volver al Menú</Button>
                 </Link>
                 
                 <Row>
+                    {/* COLUMNA IZQUIERDA: IMAGEN */}
                     <Col md={6}>
                         <img 
                             src={coffee.imageUrl} 
@@ -70,8 +110,8 @@ export default function CafeDetalle() {
                         />
                     </Col>
                     
+                    {/* COLUMNA DERECHA: DATOS */}
                     <Col md={6} style={{ paddingLeft: '40px' }}>
-                        
                         <div style={{ marginBottom: '20px' }}>
                             <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>NUEVO</span>
                             <h1 style={{ fontSize: '2.5em', marginBottom: '5px' }}>{coffee.name}</h1>
@@ -86,10 +126,10 @@ export default function CafeDetalle() {
                             <Form.Group as={Row} className="mb-3" controlId="formTamaño">
                                 <Form.Label column sm="3">Tamaño:</Form.Label>
                                 <Col sm="9">
-                                    <Form.Select>
-                                        <option>Elija una opción</option>
-                                        <option>250g</option>
-                                        <option>500g</option>
+                                    <Form.Select value={tamano} onChange={(e) => setTamano(e.target.value)}>
+                                        <option value="">Elija una opción</option>
+                                        <option value="250g">250g</option>
+                                        <option value="500g">500g</option>
                                     </Form.Select>
                                 </Col>
                             </Form.Group>
@@ -97,37 +137,54 @@ export default function CafeDetalle() {
                             <Form.Group as={Row} className="mb-3" controlId="formMolienda">
                                 <Form.Label column sm="3">Molienda:</Form.Label>
                                 <Col sm="9">
-                                    <Form.Select>
-                                        <option>Elija una opción</option>
-                                        <option>Grano entero</option>
-                                        <option>Molienda Fina (Espresso)</option>
-                                        <option>Molienda Gruesa (Prensa Francesa)</option>
+                                    <Form.Select value={molienda} onChange={(e) => setMolienda(e.target.value)}>
+                                        <option value="">Elija una opción</option>
+                                        <option value="Grano entero">Grano entero</option>
+                                        <option value="Molienda Fina">Molienda Fina (Espresso)</option>
+                                        <option value="Molienda Gruesa">Molienda Gruesa (Prensa Francesa)</option>
                                     </Form.Select>
                                 </Col>
                             </Form.Group>
                         </Form>
 
                         <div style={{ display: 'flex', marginTop: '30px' }}>
-                            <Form.Control type="number" defaultValue={1} min={1} style={{ width: '70px', marginRight: '10px' }} />
-                            <Button variant="warning" style={{ marginRight: '10px', flexGrow: 1, backgroundColor: '#a1887f', borderColor: '#a1887f' }}>Añadir al carrito</Button>
-                            <Button variant="dark" style={{ flexGrow: 1 }}>Comprar ahora</Button>
+                            <Form.Control 
+                                type="number" 
+                                value={cantidad} 
+                                min={1} 
+                                onChange={(e) => setCantidad(Number(e.target.value))} 
+                                style={{ width: '70px', marginRight: '10px' }} 
+                            />
+                            
+                            {/* BOTÓN DINÁMICO */}
+                            <Button 
+                                variant={isAdded ? "success" : "warning"} 
+                                onClick={handleAddToCart}
+                                disabled={isAdded}
+                                style={{ 
+                                    marginRight: '10px', 
+                                    flexGrow: 1, 
+                                    // Si está añadido (isAdded=true) usa el estilo default de Success (verde)
+                                    // Si NO, usa el estilo personalizado color café
+                                    ...(isAdded ? {} : { backgroundColor: '#a1887f', borderColor: '#a1887f' })
+                                }}
+                            >
+                                {isAdded ? "¡Añadido! ✔" : "Añadir al carrito"}
+                            </Button>
                         </div>
                         
                         <div style={{ marginTop: '30px', paddingTop: '20px' }}>
                             <Accordion defaultActiveKey="0">
                                 <Accordion.Item eventKey="0">
-                                    <Accordion.Header>La Historia del Café (Nuestra Mística)</Accordion.Header>
-                                    <Accordion.Body>
-                                        <p>{coffee.history}</p>
-                                    </Accordion.Body>
+                                    <Accordion.Header>La Historia del Café</Accordion.Header>
+                                    <Accordion.Body><p>{coffee.history}</p></Accordion.Body>
                                 </Accordion.Item>
                                 <Accordion.Item eventKey="1">
-                                    <Accordion.Header>Notas de Cata y Detalles Técnicos</Accordion.Header>
+                                    <Accordion.Header>Notas de Cata</Accordion.Header>
                                     <Accordion.Body>
-                                        <h4 style={{fontSize: '1.2em'}}>Notas de Cata: <strong style={{color: '#a1887f'}}>{coffee.detail.notes}</strong></h4>
-                                        <ul style={{ listStyle: 'none', paddingLeft: '0', marginTop: '10px', textAlign: 'left' }}>
+                                        <h4 style={{fontSize: '1.2em'}}>Notas: <strong style={{color: '#a1887f'}}>{coffee.detail.notes}</strong></h4>
+                                        <ul style={{ listStyle: 'none', paddingLeft: '0', marginTop: '10px' }}>
                                             <li>**Origen:** <strong>{coffee.detail.origin}</strong></li>
-                                            <li>**Variedad:** <strong>{coffee.detail.variety}</strong></li>
                                             <li>**Proceso:** <strong>{coffee.detail.process}</strong></li>
                                             <li>**Puntuación:** ⭐ {coffee.detail.rating} / 5.0</li>
                                         </ul>
@@ -138,6 +195,10 @@ export default function CafeDetalle() {
                     </Col>
                 </Row>
             </main>
+            
+            {/* BURBUJA FLOTANTE DEL CARRITO */}
+            <BurbujaCarrito />
+            
             <Footer />
         </>
     );

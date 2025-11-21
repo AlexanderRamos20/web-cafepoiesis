@@ -1,3 +1,26 @@
-body{
-    background-color: #f5f5f5;
+/* --- SOLUCIÓN SEGURA PARA CLICS (CORREGIDA) --- */
+
+/* 1. OBLIGAR A LOS BOTONES A ESTAR ENCIMA DEL CARRUSEL */
+/* Usamos z-index 10 (suficiente para ganar al carrusel, pero menor que el modal del carrito) */
+button, .btn, a, .nav-link {
+  position: relative;
+  z-index: 10; 
+  cursor: pointer;
+}
+
+/* 2. ARREGLAR EL CARRUSEL (Flechas invisibles) */
+/* Reducimos el área de las flechas para que no tapen los productos */
+.carousel-control-prev, 
+.carousel-control-next {
+  width: 5% !important; 
+  z-index: 5; /* Menor que los botones */
+}
+
+/* 3. ELIMINAMOS EL BLOQUEO DE POSITION-FIXED */
+/* (Aquí estaba el error anterior, ya no lo incluimos) */
+
+/* 4. ASEGURAR QUE LA BURBUJA DEL CARRO ESTÉ ARRIBA DE TODO */
+/* Si tu botón del carro tiene una clase específica, esto asegura que gane */
+.position-fixed.bottom-0.end-0 {
+    z-index: 9999 !important;
 }

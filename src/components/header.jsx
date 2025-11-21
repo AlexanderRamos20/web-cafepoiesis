@@ -17,14 +17,12 @@ const Header = () => {
   return (
     <header className="sticky-top shadow-sm">
       <Navbar expand="lg" bg="dark" variant="dark" className="bg-coffee-accent">
-        {/* Usamos un Container fluid para que ocupe todo el ancho */}
         <Container fluid className="position-relative">
           
           {/* Marca (Logo) */}
           <Navbar.Brand
             onClick={() => scrollToSection('home')}
             className="fs-3 fw-bold text-coffee-primary d-flex align-items-center"
-            // Movemos el logo a la izquierda con un poco de padding
             style={{ cursor: 'pointer', paddingLeft: '1rem' }} 
           >
             <img
@@ -42,10 +40,13 @@ const Header = () => {
 
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
-          {/* Contenedor de los enlaces */}
-          {/* Con 'justify-content-center' centramos el contenido */}
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-center">
-            <Nav className="fs-5">
+            {/* SOLUCIÓN: Agregamos 'align-items-center' aquí.
+                Esto fuerza a que los textos se centren verticalmente 
+                con respecto a la altura del logo/barra.
+            */}
+            <Nav className="fs-5 align-items-center"> {/* <--- AQUÍ ESTÁ EL CAMBIO */}
+            
               <Nav.Link onClick={() => scrollToSection('menu-consumo')} className="text-coffee-dark mx-3">
                   Menú
               </Nav.Link>
@@ -67,8 +68,6 @@ const Header = () => {
             </Nav>
           </Navbar.Collapse>
 
-          {/* Elemento invisible para balancear el espacio del logo y lograr un centrado perfecto */}
-          {/* Lo ocultamos en la vista móvil para que no interfiera */}
           <div className="d-none d-lg-block" style={{ width: '170px' }}></div>
 
         </Container>
