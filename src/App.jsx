@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Header from './components/header.jsx';
-import InstagramFeedLite from './components/InstagramFeedLite.jsx';
+import InstagramFeedLite from './components/InstagramFeed.jsx';
+import { useInstagramMedia } from "./hooks/instagramMedia";
 import MenuConsumo from './MenuConsumo.jsx';
 import BurbujaCarrito from './components/BurbujaCarrito.jsx'; 
 import BurbujaContactoGeneral from './components/BurbujaContactoGeneral.jsx'; 
@@ -9,15 +10,10 @@ import GranoGeneral from './components/PaginasCafe/GranoGeneral.jsx';
 import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
-import Preparaciones from './Preparaciones.jsx'; 
-
-const urls = [
-  "https://www.instagram.com/p/DFao3gnxQhB/",
-  "https://www.instagram.com/p/CiEEbxEs5uB/",
-  "https://www.instagram.com/p/DPP9mxkjdyW/",
-];
+import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo component
 
 function App() {
+  const { media, loading, error } = useInstagramMedia(3);
   const location = useLocation();
 
   useEffect(() => {
@@ -71,9 +67,10 @@ function App() {
 
         {/* 3. INSTAGRAM: Quitamos padding superior (pt-0) para que suba hacia el menú */}
         <section id="seccion-instagram" className="pt-0 pb-5">
-          <h2 className="app-title mt-4">Lo último en nuestro Instagram ☕</h2>
+          <h2 className="insta-title mt-4">Lo último en nuestro Instagram ☕</h2>
           <InstagramFeedLite
-            urls={urls}
+            media={media}
+            loading={loading}
             limit={3}
             columns={{ base: 1, md: 3, lg: 3 }}
           />
