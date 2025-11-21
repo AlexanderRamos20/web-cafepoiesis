@@ -1,16 +1,20 @@
+import { useState } from 'react';
 import { Navbar, Nav, Container } from 'react-bootstrap';
+import LoginModal from './LoginModal';
 
 const Header = () => {
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
     const headerOffset = 80;
     if (section) {
-        const elementPosition = section.getBoundingClientRect().top + window.scrollY;
-        const offsetPosition = elementPosition - headerOffset;
-        window.scrollTo({
+      const elementPosition = section.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - headerOffset;
+      window.scrollTo({
         top: offsetPosition,
         behavior: 'smooth'
-        });
+      });
     }
   };
 
@@ -18,12 +22,12 @@ const Header = () => {
     <header className="sticky-top shadow-sm">
       <Navbar expand="lg" bg="dark" variant="dark" className="bg-coffee-accent">
         <Container fluid className="position-relative">
-          
+
           {/* Marca (Logo) */}
           <Navbar.Brand
             onClick={() => scrollToSection('home')}
             className="fs-3 fw-bold text-coffee-primary d-flex align-items-center"
-            style={{ cursor: 'pointer', paddingLeft: '1rem' }} 
+            style={{ cursor: 'pointer', paddingLeft: '1rem' }}
           >
             <img
               src="/logo-cafepoiesis.jpg"
@@ -46,24 +50,34 @@ const Header = () => {
                 con respecto a la altura del logo/barra.
             */}
             <Nav className="fs-5 align-items-center"> {/* <--- AQUÍ ESTÁ EL CAMBIO */}
-            
+
               <Nav.Link onClick={() => scrollToSection('menu-consumo')} className="text-coffee-dark mx-3">
-                  Menú
+                Menú
               </Nav.Link>
               <Nav.Link onClick={() => scrollToSection('seccion-preparaciones')} className="text-coffee-dark mx-3">
-                  Preparaciones
+                Preparaciones
               </Nav.Link>
               <Nav.Link onClick={() => scrollToSection('seccion-insumos')} className="text-coffee-dark mx-3">
-                  Insumos
+                Insumos
               </Nav.Link>
               <Nav.Link onClick={() => scrollToSection('seccion-cafes-grano')} className="text-coffee-dark mx-3">
-                  Cafés
+                Cafés
               </Nav.Link>
               <Nav.Link onClick={() => scrollToSection('mapa')} className="text-coffee-dark mx-3">
-                  Cómo llegar
+                Cómo llegar
               </Nav.Link>
               <Nav.Link onClick={() => scrollToSection('seccion-instagram')} className="text-coffee-dark mx-3">
-                  Instagram
+                Instagram
+              </Nav.Link>
+              <Nav.Link
+                onClick={() => setShowLoginModal(true)}
+                className="text-coffee-dark mx-3"
+                style={{
+                  fontWeight: '600',
+                  color: '#A1887F !important'
+                }}
+              >
+                Admin
               </Nav.Link>
             </Nav>
           </Navbar.Collapse>
@@ -72,6 +86,8 @@ const Header = () => {
 
         </Container>
       </Navbar>
+
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </header>
   );
 };
