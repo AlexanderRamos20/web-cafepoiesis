@@ -57,7 +57,6 @@ function App() {
           <GranoGeneral />
         </section>
 
-<<<<<<< HEAD
         {/* 2. MENÚ DE CONSUMO (LA CARTA): 
             - pt-2: Muy poquito espacio arriba (casi pegado a Cafés)
             - pb-2: Muy poquito espacio abajo (casi pegado a Instagram)
@@ -69,16 +68,6 @@ function App() {
         {/* 3. INSTAGRAM: Quitamos padding superior (pt-0) para que suba hacia el menú */}
         <section id="seccion-instagram" className="pt-0 pb-5">
           <h2 className="app-title mt-4">Lo último en nuestro Instagram ☕</h2>
-=======
-        <section id="seccion-instagram">
-          <h2 className="insta-title" id="instagram-feed">
-            Lo último en nuestro instagram ☕
-          </h2>
-          {error && (
-            <p className="error-ig">Error al cargar Instagram: {error}</p>
-          )}
-
->>>>>>> bf67246f9088f03884a9dc8dd78d84cfaa2fef73
           <InstagramFeedLite
             media={media}
             loading={loading}
