@@ -1,38 +1,49 @@
 :root {
-    --coffee-primary: #4e342e; /* Marrón Oscuro */
-    --coffee-accent: #a1887f; /* Terracota Apagado */
-    --coffee-light: #f5f5f5; /* Crema */
-    --coffee-dark: #241616; /* Marrón muy Oscuro */
-    --bs-font-sans-serif: 'Source Serif Pro', serif; 
+  --coffee-primary: #4e342e;
+  /* Marrón Oscuro */
+  --coffee-accent: #a1887f;
+  /* Terracota Apagado */
+  --coffee-light: #f5f5f5;
+  /* Crema */
+  --coffee-dark: #241616;
+  /* Marrón muy Oscuro */
+  --bs-font-sans-serif: 'Source Serif Pro', serif;
 }
 
-.bg-coffee-accent { 
-    background-color: var(--coffee-accent) !important; 
+.bg-coffee-accent {
+  background-color: var(--coffee-accent) !important;
 }
 
-.text-coffee-primary { 
-    color: var(--coffee-light) !important; 
+.text-coffee-primary {
+  color: var(--coffee-light) !important;
 }
 
-.text-coffee-dark { 
-    color: var(--coffee-dark) !important; 
+.text-coffee-dark {
+  color: var(--coffee-dark) !important;
 }
 
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 .navbar .nav-link,
 .fw-bold {
-    font-weight: 700 !important;
+  font-weight: 700 !important;
 }
 
 .navbar-brand {
-    font-weight: 700;
+  font-weight: 700;
 }
-.insta-title{
+
+.insta-title {
   text-align: center;
 }
 
 /* --- ESTILOS PARA RESPONSIVIDAD --- */
 @media (max-width: 768px) {
+
   /* Reducimos el tamaño de los títulos principales de las secciones */
   h2 {
     font-size: 1.6rem !important;

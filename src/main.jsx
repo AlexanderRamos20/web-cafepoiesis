@@ -10,6 +10,8 @@ import CafeDetalle from './components/PaginasCafe/CafeDetalle.jsx'
 import AdminLayout from './admin/AdminLayout.jsx'
 import Products from './admin/Products.jsx'
 import ProductForm from './admin/ProductForm.jsx'
+import AdminCarts from './admin/AdminCarts.jsx'
+import AdminForms from './admin/AdminForms.jsx'
 import { AuthProvider } from './contexts/AuthContext.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
 
@@ -41,6 +43,14 @@ const router = createBrowserRouter([
       {
         path: "productos/editar/:id",
         element: <ProductForm />
+      },
+      {
+        path: "carritos",
+        element: <AdminCarts />
+      },
+      {
+        path: "formularios",
+        element: <AdminForms />
       }
     ]
   }

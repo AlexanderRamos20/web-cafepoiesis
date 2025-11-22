@@ -7,6 +7,7 @@ const Products = () => {
     const navigate = useNavigate();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('cafes_en_grano'); // Default tab
 
     useEffect(() => {
         fetchProducts();
@@ -51,6 +52,8 @@ const Products = () => {
         }
     };
 
+    const filteredProducts = products.filter(p => p.tipo_producto === activeTab);
+
     if (loading) {
         return <div>Cargando productos...</div>;
     }
@@ -62,6 +65,38 @@ const Products = () => {
                 <button onClick={() => navigate('/admin/productos/nuevo')} className="btn-primary">
                     <Plus size={20} />
                     Nuevo Producto
+                </button>
+            </div>
+
+            {/* PESTAÑAS DE NAVEGACIÓN */}
+            <div className="tabs-container" style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
+                <button
+                    className={`tab-button ${activeTab === 'cafes_en_grano' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('cafes_en_grano')}
+                    style={{ padding: '10px 20px', border: 'none', background: 'none', borderBottom: activeTab === 'cafes_en_grano' ? '2px solid #4e342e' : 'none', fontWeight: activeTab === 'cafes_en_grano' ? 'bold' : 'normal', color: activeTab === 'cafes_en_grano' ? '#4e342e' : '#666' }}
+                >
+                    Cafés en Grano
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'insumos' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('insumos')}
+                    style={{ padding: '10px 20px', border: 'none', background: 'none', borderBottom: activeTab === 'insumos' ? '2px solid #4e342e' : 'none', fontWeight: activeTab === 'insumos' ? 'bold' : 'normal', color: activeTab === 'insumos' ? '#4e342e' : '#666' }}
+                >
+                    Insumos
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'productos_muestra' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('productos_muestra')}
+                    style={{ padding: '10px 20px', border: 'none', background: 'none', borderBottom: activeTab === 'productos_muestra' ? '2px solid #4e342e' : 'none', fontWeight: activeTab === 'productos_muestra' ? 'bold' : 'normal', color: activeTab === 'productos_muestra' ? '#4e342e' : '#666' }}
+                >
+                    Productos de Muestra
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'preparaciones' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('preparaciones')}
+                    style={{ padding: '10px 20px', border: 'none', background: 'none', borderBottom: activeTab === 'preparaciones' ? '2px solid #4e342e' : 'none', fontWeight: activeTab === 'preparaciones' ? 'bold' : 'normal', color: activeTab === 'preparaciones' ? '#4e342e' : '#666' }}
+                >
+                    Preparaciones
                 </button>
             </div>
 
@@ -78,7 +113,7 @@ const Products = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {products.map(product => (
+                        {filteredProducts.map(product => (
                             <tr key={product.id_producto}>
                                 <td>
                                     <img
@@ -118,9 +153,9 @@ const Products = () => {
                         ))}
                     </tbody>
                 </table>
-                {products.length === 0 && (
+                {filteredProducts.length === 0 && (
                     <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
-                        No hay productos registrados
+                        No hay productos en esta categoría
                     </div>
                 )}
             </div>

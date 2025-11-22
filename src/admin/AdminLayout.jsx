@@ -1,5 +1,5 @@
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { Package, LogOut, Home, User } from 'lucide-react';
+import { Package, LogOut, Home, User, ShoppingCart, MessageSquare } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import './AdminLayout.css';
 
@@ -20,7 +20,7 @@ const AdminLayout = () => {
         <div className="admin-container">
             <aside className="admin-sidebar">
                 <div className="admin-logo">
-                    <h2>☕ Admin Panel</h2>
+                    <h2>Panel de Administración</h2>
                     {user && (
                         <div style={{
                             fontSize: '0.85rem',
@@ -40,15 +40,19 @@ const AdminLayout = () => {
                         <Package size={20} />
                         Productos
                     </Link>
+                    <Link to="/admin/carritos" className="nav-link">
+                        <ShoppingCart size={20} />
+                        Carritos
+                    </Link>
+                    <Link to="/admin/formularios" className="nav-link">
+                        <MessageSquare size={20} />
+                        Formularios
+                    </Link>
                 </nav>
                 <div className="admin-footer">
-                    <button onClick={() => navigate('/')} className="nav-link">
-                        <Home size={20} />
-                        Ir al sitio
-                    </button>
                     <button onClick={handleLogout} className="nav-link logout">
                         <LogOut size={20} />
-                        Salir
+                        Cerrar sesión
                     </button>
                 </div>
             </aside>

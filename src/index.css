@@ -1,26 +1,44 @@
-/* --- SOLUCIÓN SEGURA PARA CLICS (CORREGIDA) --- */
+/* --- SOLUCIÓN SEGURA PARA CLICS --- */
 
 /* 1. OBLIGAR A LOS BOTONES A ESTAR ENCIMA DEL CARRUSEL */
-/* Usamos z-index 10 (suficiente para ganar al carrusel, pero menor que el modal del carrito) */
-button, .btn, a, .nav-link {
+button,
+.btn,
+a,
+.nav-link {
   position: relative;
-  z-index: 10; 
+  z-index: 10;
   cursor: pointer;
 }
 
 /* 2. ARREGLAR EL CARRUSEL (Flechas invisibles) */
-/* Reducimos el área de las flechas para que no tapen los productos */
-.carousel-control-prev, 
+.carousel-control-prev,
 .carousel-control-next {
-  width: 5% !important; 
-  z-index: 5; /* Menor que los botones */
+  width: 5% !important;
+  z-index: 5;
+  /* Menor que los botones */
 }
 
-/* 3. ELIMINAMOS EL BLOQUEO DE POSITION-FIXED */
-/* (Aquí estaba el error anterior, ya no lo incluimos) */
+/* 3. ASEGURAR QUE LAS BURBUJAS ESTÉN ARRIBA DE TODO */
+.position-fixed.bottom-0.end-0,
+.position-fixed.bottom-0.start-0 {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+  position: fixed !important;
+}
 
-/* 4. ASEGURAR QUE LA BURBUJA DEL CARRO ESTÉ ARRIBA DE TODO */
-/* Si tu botón del carro tiene una clase específica, esto asegura que gane */
-.position-fixed.bottom-0.end-0 {
-    z-index: 9999 !important;
+/* 4. ARREGLAR MODALES (Deben estar ENCIMA de las burbujas) */
+.modal-backdrop {
+  z-index: 10050 !important;
+  /* Mayor que las burbujas (9999) */
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  /* Color fijo con transparencia */
+  opacity: 1 !important;
+  /* Evita la transición de opacidad de Bootstrap */
+  transition: none !important;
+  /* Elimina el parpadeo/animación */
+}
+
+.modal {
+  z-index: 10055 !important;
+  /* Mayor que el backdrop */
 }
