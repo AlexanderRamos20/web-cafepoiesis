@@ -196,7 +196,7 @@ const ProductForm = () => {
                         >
                             <option value="cafes_en_grano">Café en Grano</option>
                             <option value="insumos">Insumos</option>
-                            <option value="productos_muestra">Muestras</option>
+
                             <option value="preparaciones">Preparaciones</option>
                             <option value="accesorio">Accesorio</option>
                             <option value="otro">Otro</option>

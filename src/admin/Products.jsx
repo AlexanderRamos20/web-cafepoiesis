@@ -84,13 +84,7 @@ const Products = () => {
                 >
                     Insumos
                 </button>
-                <button
-                    className={`tab-button ${activeTab === 'productos_muestra' ? 'active' : ''}`}
-                    onClick={() => setActiveTab('productos_muestra')}
-                    style={{ padding: '10px 20px', border: 'none', background: 'none', borderBottom: activeTab === 'productos_muestra' ? '2px solid #4e342e' : 'none', fontWeight: activeTab === 'productos_muestra' ? 'bold' : 'normal', color: activeTab === 'productos_muestra' ? '#4e342e' : '#666' }}
-                >
-                    Productos de Muestra
-                </button>
+
                 <button
                     className={`tab-button ${activeTab === 'preparaciones' ? 'active' : ''}`}
                     onClick={() => setActiveTab('preparaciones')}
