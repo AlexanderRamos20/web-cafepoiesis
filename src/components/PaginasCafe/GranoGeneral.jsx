@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import './GranoGeneral.css'; 
+import './GranoGeneral.css';
 import { Carousel, Row, Col } from 'react-bootstrap';
-import { Link } from 'react-router-dom'; 
-import { getCartDetails } from '../../firebaseCartService'; 
-import { supabase } from '../../supabaseClient'; 
+import { Link } from 'react-router-dom';
+import { getCartDetails } from '../../firebaseCartService';
+// 1. IMPORTAMOS EL CLIENTE DE SUPABASE
+import { supabase } from '../../supabaseClient';
 
 const chunkArray = (array, size) => {
     const chunkedArr = [];
@@ -13,7 +14,7 @@ const chunkArray = (array, size) => {
     return chunkedArr;
 };
 
-// --- COMPONENTE TARJETA ---
+// --- COMPONENTE TARJETA (Mantenemos tu lógica del puntito rojo) ---
 const CoffeeCard = ({ coffee }) => {
     const [qty, setQty] = useState(0);
 
@@ -41,49 +42,84 @@ const CoffeeCard = ({ coffee }) => {
     return (
         <Link to={`/cafes/${coffee.id}`} className="coffee-card-link" style={{ textDecoration: 'none' }}>
             <div className="coffee-card" style={{ position: 'relative' }}>
-                
-                {/* IMAGEN con Fallback visual */}
-                <img 
-                    src={coffee.imageUrl || '/logo-cafepoiesis.jpg'} 
-                    alt={coffee.name} 
+
+                {/* IMAGEN (Con fallback por si viene vacía de la BD) */}
+                <img
+                    src={coffee.imageUrl || 'https://placehold.co/300x400?text=No+Image'}
+                    alt={coffee.name}
                     className="coffee-image"
-                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} // Si falla la carga, muestra logo
                 />
-                
-                {/* PUNTITO ROJO (Badge) */}
+
+                {/* PUNTITO ROJO (Badge de cantidad en carrito) */}
                 {qty > 0 && (
                     <div style={{
-                        position: 'absolute', top: '10px', right: '10px',
-                        backgroundColor: '#d32f2f', color: 'white', borderRadius: '50%',
-                        width: '30px', height: '30px', display: 'flex', justifyContent: 'center',
-                        alignItems: 'center', fontWeight: 'bold', fontSize: '14px', zIndex: 100,
-                        boxShadow: '0 2px 5px rgba(0,0,0,0.3)', border: '2px solid white'
+                        position: 'absolute',
+                        top: '10px',
+                        right: '10px',
+                        backgroundColor: '#d32f2f',
+                        color: 'white',
+                        borderRadius: '50%',
+                        width: '30px',
+                        height: '30px',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        zIndex: 100,
+                        boxShadow: '0 2px 5px rgba(0,0,0,0.3)',
+                        border: '2px solid white'
                     }}>
                         {qty}
                     </div>
                 )}
 
+                {/* BADGE "AGOTADO" para productos no disponibles */}
+                {!coffee.disponible && (
+                    <div style={{
+                        backgroundColor: 'rgba(211, 47, 47, 0.95)',
+                        color: 'white',
+                        padding: '8px 16px',
+                        fontWeight: 'bold',
+                        fontSize: '14px',
+                        textAlign: 'center',
+                        marginTop: '10px',
+                        marginBottom: '10px',
+                        borderRadius: '4px',
+                        textTransform: 'uppercase',
+                        letterSpacing: '1px'
+                    }}>
+                        Agotado
+                    </div>
+                )}
+
                 <h3>{coffee.name}</h3>
-                <p className="card-type">Café de grano</p> 
-                
+                <p className="card-type">Café de grano</p>
+
+                {/* Mostramos las notas de cata si existen */}
                 {coffee.notes && (
                     <p className="text-muted small fst-italic mb-1" style={{ fontSize: '0.9rem' }}>
                         {coffee.notes}
                     </p>
                 )}
 
-                <p className="price">Desde: ${coffee.price}</p> 
+                <p className="price">Desde: ${coffee.price}</p>
             </div>
         </Link>
     );
 };
 
-// --- CARRUSEL ---
-const CarouselContent = ({ items }) => (
-    <Carousel interval={null} indicators={false} wrap={true} variant="dark">
+// --- CARRUSEL (Igual que antes) ---
+const CarouselContent = ({ items, carouselId }) => (
+    <Carousel
+        interval={null}
+        indicators={false}
+        wrap={true}
+        variant="dark"
+    >
         {items.map((chunk, slideIndex) => (
             <Carousel.Item key={slideIndex}>
-                <Row className="justify-content-center g-4 py-3"> 
+                <Row className="justify-content-center g-4 py-3">
                     {chunk.map((coffee, viewIdx) => (
                         <Col xs={12} md={4} key={viewIdx} className="d-flex justify-content-center">
                             <CoffeeCard coffee={coffee} />
@@ -96,41 +132,49 @@ const CarouselContent = ({ items }) => (
 );
 
 function GranoGeneral() {
+    // 2. ESTADOS PARA DATOS DE LA BD
     const [coffees, setCoffees] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // 3. CARGAR DATOS DESDE SUPABASE
     useEffect(() => {
         const fetchCafes = async () => {
             try {
+                // Consultamos directamente la tabla cafes_en_grano y unimos con productos
+                // Usamos left join normal y filtramos en JS para evitar problemas de sintaxis !inner
                 const { data, error } = await supabase
-                    .from('productos')
+                    .from('cafes_en_grano')
                     .select(`
                         *,
-                        cafes_en_grano (*)
-                    `)
-                    // --- CAMBIO CLAVE AQUÍ ---
-                    // Usamos .ilike con %grano% para ser flexibles
-                    // Esto encontrará "cafes_en_grano", "café en grano e insumos", "Grano", etc.
-                    .ilike('tipo_producto', '%grano%') 
-                    .eq('disponible', true);
+                        productos (*)
+                    `);
 
                 if (error) throw error;
 
+                // Transformamos los datos al formato que usa tu componente
                 const formattedCafes = data.map(item => {
-                    const detalles = Array.isArray(item.cafes_en_grano) 
-                        ? item.cafes_en_grano[0] 
-                        : item.cafes_en_grano;
+                    // item es la entrada de cafes_en_grano
+                    // item.productos es el objeto con datos generales
+                    const productInfo = item.productos;
+
+                    // Si por alguna razón no hay producto asociado, lo saltamos
+                    if (!productInfo) return null;
+
+                    // FILTRO: Solo mostrar si el producto tiene mostrar = true
+                    if (!productInfo.mostrar) return null;
 
                     return {
-                        id: item.id_producto,
-                        name: item.nombre,
-                        // Manejo seguro del precio
-                        price: (item.precio || 0).toLocaleString('es-CL'),
-                        // Si la imagen es NULL, usamos el logo
-                        imageUrl: item.imagen || '/logo-cafepoiesis.jpg',
-                        notes: detalles ? detalles.notas_cata : ''
+                        id: productInfo.id_producto, // ID de la BD
+                        name: productInfo.nombre,
+                        // Formatear precio con puntos (ej: 9.500)
+                        price: productInfo.precio ? productInfo.precio.toLocaleString('es-CL') : '0',
+                        imageUrl: productInfo.imagen,
+                        // Sacamos las notas de la tabla cafes_en_grano (item actual)
+                        notes: item.notas_cata,
+                        // Incluimos el estado de disponibilidad (aunque ya filtramos por mostrar)
+                        disponible: productInfo.mostrar
                     };
-                });
+                }).filter(item => item !== null);
 
                 setCoffees(formattedCafes);
             } catch (error) {
@@ -142,7 +186,7 @@ function GranoGeneral() {
 
         fetchCafes();
     }, []);
-    
+
     const cafesMobile = chunkArray(coffees, 1);
     const cafesDesktop = chunkArray(coffees, 3);
 
@@ -151,24 +195,24 @@ function GranoGeneral() {
     }
 
     return (
-        <main className="cafes-page-content"> 
+        <main className="cafes-page-content">
             <h2>Nuestra Selección de Cafés de Grano</h2>
             <p className="description">
                 Explora nuestros granos especiales, tostados a la perfección para resaltar sus perfiles de sabor únicos.
             </p>
-            
+
             {coffees.length === 0 ? (
                 <div className="text-center py-5">
-                    <p>No se encontraron cafés disponibles.</p>
+                    <p>No hay cafés disponibles en este momento.</p>
                 </div>
             ) : (
                 <div className="carousel-container-wrapper">
                     <div className="d-md-none">
-                        <CarouselContent items={cafesMobile} />
+                        <CarouselContent items={cafesMobile} carouselId="carouselCafesMobile" />
                     </div>
-                    
+
                     <div className="d-none d-md-block">
-                        <CarouselContent items={cafesDesktop} />
+                        <CarouselContent items={cafesDesktop} carouselId="carouselCafesDesktop" />
                     </div>
                 </div>
             )}

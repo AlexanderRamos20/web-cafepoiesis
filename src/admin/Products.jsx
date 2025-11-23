@@ -163,8 +163,8 @@ const Products = () => {
                                 <td>{cafeIds.has(product.id_producto) ? 'café en grano e insumo' : product.tipo_producto}</td>
                                 <td>${product.precio?.toLocaleString('es-CL')}</td>
                                 <td>
-                                    <span className={`status-badge ${product.disponible ? 'available' : 'unavailable'}`}>
-                                        {product.disponible ? 'Disponible' : 'No disponible'}
+                                    <span className={`status-badge ${product.mostrar ? 'available' : 'unavailable'}`}>
+                                        {product.mostrar ? 'Visible' : 'Oculto'}
                                     </span>
                                 </td>
                                 <td>

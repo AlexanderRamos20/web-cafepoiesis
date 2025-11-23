@@ -14,7 +14,7 @@ const ProductForm = () => {
         tipo_producto: 'cafes_en_grano',
         subtipo_preparacion: 'Frias',
         imagen: '',
-        disponible: true,
+        mostrar: false, // Cambiado de disponible a mostrar
         origen: '',
         altura_metros: '',
         proceso_beneficio: '',
@@ -41,14 +41,15 @@ const ProductForm = () => {
             if (error) throw error;
 
             let cafeData = {};
-            if (product.tipo_producto === 'cafes_en_grano') {
-                const { data: cafe } = await supabase
+            // Check for both the original key and the stored value, or any variation containing 'café en grano'
+            if (product.tipo_producto === 'cafes_en_grano' || (product.tipo_producto && product.tipo_producto.includes('café en grano'))) {
+                const { data: cafe, error: cafeError } = await supabase
                     .from('cafes_en_grano')
                     .select('*')
                     .eq('id_producto', id)
                     .single();
 
-                if (cafe) {
+                if (!cafeError && cafe) {
                     cafeData = {
                         origen: cafe.origen || '',
                         altura_metros: cafe.altura_metros || '',
@@ -60,7 +61,20 @@ const ProductForm = () => {
             }
 
             setFormData({
-                ...product,
+                nombre: product.nombre || '',
+                descripcion: product.descripcion || '',
+                precio: product.precio || '',
+                tipo_producto: (product.tipo_producto === 'cafes_en_grano' || (product.tipo_producto && product.tipo_producto.includes('café en grano')))
+                    ? 'cafes_en_grano'
+                    : product.tipo_producto || 'otro',
+                subtipo_preparacion: product.subtipo_preparacion || 'Frias',
+                imagen: product.imagen || '',
+                mostrar: product.mostrar || false,
+                origen: '', // Default empty for cafe fields, will be overwritten if cafeData exists
+                altura_metros: '',
+                proceso_beneficio: '',
+                variedad: '',
+                notas_cata: '',
                 ...cafeData
             });
         } catch (error) {
@@ -83,17 +97,21 @@ const ProductForm = () => {
         setLoading(true);
 
         try {
+            // Determine if it is a coffee product based on the form state
+            const isCoffee = formData.tipo_producto === 'cafes_en_grano' || (formData.tipo_producto && formData.tipo_producto.includes('café en grano'));
+
             const productData = {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
                 precio: parseFloat(formData.precio),
+                // If it's a coffee, force the standard DB value 'café en grano e insumo'
                 tipo_producto: formData.tipo_producto === 'preparaciones'
                     ? formData.subtipo_preparacion
-                    : formData.tipo_producto === 'cafes_en_grano'
+                    : isCoffee
                         ? 'café en grano e insumo'
                         : formData.tipo_producto,
                 imagen: formData.imagen,
-                disponible: formData.disponible
+                mostrar: formData.mostrar // Guardamos en la columna mostrar
             };
 
             let productId = id;
@@ -105,21 +123,16 @@ const ProductForm = () => {
                     .eq('id_producto', id);
                 if (error) throw error;
             } else {
-                console.log('Intentando guardar producto:', productData);
                 const { data, error } = await supabase
                     .from('productos')
                     .insert([productData])
                     .select()
                     .single();
-                if (error) {
-                    console.error('Error al insertar en productos:', error);
-                    throw error;
-                }
-                console.log('Producto guardado exitosamente:', data);
+                if (error) throw error;
                 productId = data.id_producto;
             }
 
-            if (formData.tipo_producto === 'cafes_en_grano') {
+            if (isCoffee) {
                 const cafeData = {
                     id_producto: productId,
                     origen: formData.origen,
@@ -133,7 +146,10 @@ const ProductForm = () => {
                     .from('cafes_en_grano')
                     .upsert(cafeData);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('Error upserting cafe data:', error);
+                    throw error;
+                }
             } else if (isEditMode) {
                 await supabase.from('cafes_en_grano').delete().eq('id_producto', productId);
             }
@@ -175,7 +191,7 @@ const ProductForm = () => {
                     <textarea
                         name="descripcion"
                         className="form-textarea"
-                        value={formData.descripcion}
+                        value={formData.descripcion || ''}
                         onChange={handleChange}
                     />
                 </div>
@@ -230,11 +246,11 @@ const ProductForm = () => {
                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                         <input
                             type="checkbox"
-                            name="disponible"
-                            checked={formData.disponible}
+                            name="mostrar"
+                            checked={formData.mostrar}
                             onChange={handleChange}
                         />
-                        Disponible para la venta
+                        Mostrar Producto
                     </label>
                 </div>
 
@@ -256,7 +272,7 @@ const ProductForm = () => {
                     </div>
                 )}
 
-                {formData.tipo_producto === 'cafes_en_grano' && (
+                {(formData.tipo_producto === 'cafes_en_grano' || (formData.tipo_producto && formData.tipo_producto.includes('café en grano'))) && (
                     <div style={{ marginTop: '2rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
                         <h3 style={{ marginBottom: '1rem', color: 'var(--coffee-primary)' }}>Detalles del Café</h3>
 
@@ -267,7 +283,7 @@ const ProductForm = () => {
                                     type="text"
                                     name="origen"
                                     className="form-input"
-                                    value={formData.origen}
+                                    value={formData.origen || ''}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -278,7 +294,7 @@ const ProductForm = () => {
                                     type="number"
                                     name="altura_metros"
                                     className="form-input"
-                                    value={formData.altura_metros}
+                                    value={formData.altura_metros || ''}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -291,7 +307,7 @@ const ProductForm = () => {
                                     type="text"
                                     name="proceso_beneficio"
                                     className="form-input"
-                                    value={formData.proceso_beneficio}
+                                    value={formData.proceso_beneficio || ''}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -302,7 +318,7 @@ const ProductForm = () => {
                                     type="text"
                                     name="variedad"
                                     className="form-input"
-                                    value={formData.variedad}
+                                    value={formData.variedad || ''}
                                     onChange={handleChange}
                                 />
                             </div>
@@ -313,7 +329,7 @@ const ProductForm = () => {
                             <textarea
                                 name="notas_cata"
                                 className="form-textarea"
-                                value={formData.notas_cata}
+                                value={formData.notas_cata || ''}
                                 onChange={handleChange}
                                 placeholder="Chocolate, Frutos rojos..."
                             />

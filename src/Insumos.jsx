@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Carousel, Row, Col, Button } from 'react-bootstrap'; 
-import './Insumos.css'; 
-import { addToCart, getProductQuantity } from './firebaseCartService'; 
-import { supabase } from './supabaseClient'; 
+import { Carousel, Row, Col, Button } from 'react-bootstrap';
+import './Insumos.css';
+import { addToCart, getProductQuantity } from './firebaseCartService';
+import { supabase } from './supabaseClient';
 
 const chunkArray = (array, size) => {
     const chunkedArr = [];
@@ -32,24 +32,24 @@ const InsumoCard = ({ item }) => {
         // El precio ya viene formateado con $, lo limpiamos o pasamos el raw si lo tuvieras
         // Pero addToCart se encarga de limpiarlo.
         addToCart(item.id, item.nombre, 1, item.precio);
-        
+
         setTimeout(updateQuantity, 50);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 1500);
     };
 
     return (
-        <div className="card h-100 card-insumo shadow-sm border-0"> 
+        <div className="card h-100 card-insumo shadow-sm border-0">
             <div style={{ position: 'relative' }}>
                 {/* IMAGEN CON PROTECCIÓN Y FALLBACK */}
-                <img 
-                    src={item.imagen || '/logo-cafepoiesis.jpg'} 
-                    className="card-img-top producto-img" 
-                    alt={item.nombre} 
+                <img
+                    src={item.imagen || '/logo-cafepoiesis.jpg'}
+                    className="card-img-top producto-img"
+                    alt={item.nombre}
                     onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} // Si falla, muestra el logo
                     style={{ padding: '10px', objectFit: 'contain' }}
                 />
-                
+
                 {qty > 0 && (
                     <div style={{
                         position: 'absolute', top: '10px', right: '15px',
@@ -70,9 +70,9 @@ const InsumoCard = ({ item }) => {
                     {item.subCategoria || 'Accesorio'}
                 </p>
                 <p className="card-text fw-bold">{item.precio}</p>
-                
+
                 <div className='d-grid gap-2'>
-                    <Button 
+                    <Button
                         variant={isAdded ? "success" : "success"}
                         onClick={handleAdd}
                         className="btn-sm"
@@ -92,7 +92,7 @@ const CarouselContent = ({ items }) => (
     <Carousel interval={null} indicators={false} wrap={true} variant="dark">
         {items.map((chunk, i) => (
             <Carousel.Item key={i}>
-                <Row className="justify-content-center g-4 px-3 py-2"> 
+                <Row className="justify-content-center g-4 px-3 py-2">
                     {chunk.map((item) => (
                         <Col xs={12} md={4} key={item.id} className="d-flex justify-content-center">
                             <InsumoCard item={item} />
@@ -111,22 +111,41 @@ export default function Insumos() {
     useEffect(() => {
         const fetchInsumos = async () => {
             try {
+                // 1. Obtener IDs de cafés para EXCLUIRLOS
+                const { data: cafesData, error: cafesError } = await supabase
+                    .from('cafes_en_grano')
+                    .select('id_producto');
+
+                if (cafesError) throw cafesError;
+                const cafeIds = new Set(cafesData.map(c => c.id_producto));
+
+                // 2. Obtener productos que podrían ser insumos
                 const { data, error } = await supabase
                     .from('productos')
                     .select('*')
-                    // AQUÍ ESTÁ EL TRUCO: .ilike con %insumo%
-                    // Busca cualquier cosa que contenga "insumo" (mayús o minús)
-                    .ilike('tipo_producto', '%insumo%') 
-                    .eq('disponible', true);
+                    .eq('mostrar', true); // Filtramos por la columna mostrar
 
                 if (error) throw error;
 
-                const formattedInsumos = data.map(item => ({
+                const formattedInsumos = data.filter(item => {
+                    // FILTRO 1: No debe ser un café de grano (por ID) - ESTRICTO
+                    // Si el ID existe en la tabla cafes_en_grano, ES un café y NO debe estar aquí.
+                    if (cafeIds.has(item.id_producto)) return false;
+
+                    const type = (item.tipo_producto || '').toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+                    // FILTRO 2: EXCLUIR explícitamente tipos de café (por texto normalizado)
+                    if (type.includes('cafe') && type.includes('grano')) return false;
+                    if (type === 'cafes_en_grano') return false;
+
+                    // FILTRO 3: INCLUIR solo insumos y accesorios
+                    return type.includes('insumo') || type.includes('accesorio');
+                }).map(item => ({
                     id: item.id_producto,
                     nombre: item.nombre,
-                    subCategoria: item.descripcion, 
+                    subCategoria: item.descripcion,
                     // Manejo seguro del precio y formato
-                    precio: `$${(item.precio || 0).toLocaleString('es-CL')}`, 
+                    precio: `$${(item.precio || 0).toLocaleString('es-CL')}`,
                     // Si no hay imagen, usa el logo por defecto
                     imagen: item.imagen || '/logo-cafepoiesis.jpg'
                 }));
@@ -150,7 +169,7 @@ export default function Insumos() {
     return (
         <section id="seccion-insumos" className="insumos container py-5">
             <h2 className="text-center mb-4">Insumos y Accesorios</h2>
-            
+
             {insumos.length === 0 ? (
                 <div className="text-center py-5">
                     <p>No se encontraron insumos disponibles.</p>
