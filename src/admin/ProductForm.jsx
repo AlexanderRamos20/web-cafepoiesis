@@ -12,6 +12,7 @@ const ProductForm = () => {
         descripcion: '',
         precio: '',
         tipo_producto: 'cafes_en_grano',
+        subtipo_preparacion: 'Frias',
         imagen: '',
         disponible: true,
         origen: '',
@@ -86,7 +87,11 @@ const ProductForm = () => {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
                 precio: parseFloat(formData.precio),
-                tipo_producto: formData.tipo_producto,
+                tipo_producto: formData.tipo_producto === 'preparaciones'
+                    ? formData.subtipo_preparacion
+                    : formData.tipo_producto === 'cafes_en_grano'
+                        ? 'café en grano e insumo'
+                        : formData.tipo_producto,
                 imagen: formData.imagen,
                 disponible: formData.disponible
             };
@@ -100,12 +105,17 @@ const ProductForm = () => {
                     .eq('id_producto', id);
                 if (error) throw error;
             } else {
+                console.log('Intentando guardar producto:', productData);
                 const { data, error } = await supabase
                     .from('productos')
                     .insert([productData])
                     .select()
                     .single();
-                if (error) throw error;
+                if (error) {
+                    console.error('Error al insertar en productos:', error);
+                    throw error;
+                }
+                console.log('Producto guardado exitosamente:', data);
                 productId = data.id_producto;
             }
 
@@ -227,6 +237,24 @@ const ProductForm = () => {
                         Disponible para la venta
                     </label>
                 </div>
+
+                {formData.tipo_producto === 'preparaciones' && (
+                    <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f7fafc', borderRadius: '8px' }}>
+                        <div className="form-group">
+                            <label className="form-label">Tipo de Preparación</label>
+                            <select
+                                name="subtipo_preparacion"
+                                className="form-select"
+                                value={formData.subtipo_preparacion}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="Frias">Preparaciones Frías</option>
+                                <option value="cafetería">Preparaciones Calientes (Cafetería)</option>
+                            </select>
+                        </div>
+                    </div>
+                )}
 
                 {formData.tipo_producto === 'cafes_en_grano' && (
                     <div style={{ marginTop: '2rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
