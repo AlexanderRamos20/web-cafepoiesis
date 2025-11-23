@@ -11,6 +11,7 @@ import Mapa from './components/map.jsx';
 import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
 import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo component
+import CallLoyverse from "./components/loyverse.jsx";
 
 function App() {
   const { media, loading, error } = useInstagramMedia(3);
@@ -43,7 +44,7 @@ function App() {
       <Header />
 
       <main className="app-main">
-        
+        <CallLoyverse />
         <section id="seccion-preparaciones">
           <Preparaciones />
         </section>
