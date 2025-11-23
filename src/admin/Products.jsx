@@ -49,7 +49,7 @@ const Products = () => {
 
             if (error) throw error;
 
-            setProducts(products.map(p => 
+            setProducts(prev => prev.map(p => 
                 p.id_producto === id ? { ...p, mostrar: !currentStatus } : p
             ));
         } catch (error) {
@@ -63,14 +63,9 @@ const Products = () => {
 
         try {
             await supabase.from('cafes_en_grano').delete().eq('id_producto', id);
-            
-            const { error } = await supabase
-                .from('productos')
-                .delete()
-                .eq('id_producto', id);
+            const { error } = await supabase.from('productos').delete().eq('id_producto', id);
 
             if (error) throw error;
-
             fetchProducts();
         } catch (error) {
             console.error(error);
@@ -79,41 +74,9 @@ const Products = () => {
     };
 
     const filteredProducts = products.filter(p => {
-        if (!p.tipo_producto) return false;
-        
-        // Normalizar texto: minúsculas y sin tildes para evitar errores de tipeo
-        const type = p.tipo_producto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-
-        // 1. BLOQUEO GLOBAL: Frias y Cafetería NO se muestran NUNCA.
-        // Esto asegura que aunque tengan checkbox "visible", desaparezcan de la gestión.
-        if (type.includes('fria') || type.includes('cafeteria') || type.includes('preparacion')) {
-            return false;
-        }
-
         if (activeTab === 'todos') return true;
-
-        if (activeTab === 'cafes_en_grano') {
-            return cafeIds.has(p.id_producto);
-        }
-
-        if (activeTab === 'insumo') {
-            // A. Si es un café (está en la tabla cafes_en_grano), LO QUITAMOS.
-            if (cafeIds.has(p.id_producto)) return false;
-
-            // B. Filtro de Lista Blanca (Whitelist)
-            // Solo permitimos pasar a los que coincidan con estas categorías exactas
-            const allowedCategories = [
-                'cafe en grano e insumos', // La categoría mixta de Loyverse
-                'insumos',
-                'insumo',
-                'accesorios',
-                'accesorio'
-            ];
-            
-            // Verificamos si el tipo normalizado está en la lista permitida
-            return allowedCategories.includes(type);
-        }
-        
+        if (activeTab === 'cafes_en_grano') return cafeIds.has(p.id_producto);
+        if (activeTab === 'insumo') return !cafeIds.has(p.id_producto);
         return false; 
     });
 
@@ -132,32 +95,41 @@ const Products = () => {
             </div>
 
             <div className="tabs-container" style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
-                {['todos', 'cafes_en_grano', 'insumo', 'preparacion'].map(tab => (
-                    <button
-                        key={tab}
-                        className={`tab-button ${activeTab === tab ? 'active' : ''}`}
-                        onClick={() => setActiveTab(tab)}
-                        style={{ 
-                            padding: '10px 20px', 
-                            border: 'none', 
-                            background: 'none', 
-                            borderBottom: activeTab === tab ? '2px solid #6F4E37' : 'none', 
-                            fontWeight: activeTab === tab ? 'bold' : 'normal', 
-                            color: activeTab === tab ? '#6F4E37' : '#666',
-                            textTransform: 'capitalize',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        {tab.replace(/_/g, ' ')}
-                    </button>
-                ))}
+                <button
+                    className={`tab-button ${activeTab === 'todos' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('todos')}
+                    style={getTabStyle(activeTab === 'todos')}
+                >
+                    Todos
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'cafes_en_grano' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('cafes_en_grano')}
+                    style={getTabStyle(activeTab === 'cafes_en_grano')}
+                >
+                    Cafés en Grano
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'insumo' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('insumo')}
+                    style={getTabStyle(activeTab === 'insumo')}
+                >
+                    Insumos
+                </button>
+                <button
+                    className={`tab-button ${activeTab === 'preparacion' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('preparacion')}
+                    style={getTabStyle(activeTab === 'preparacion')}
+                >
+                    Preparaciones
+                </button>
             </div>
 
             {activeTab === 'preparacion' ? (
-                <div style={{ textAlign: 'center', padding: '4rem', backgroundColor: '#fff', borderRadius: '12px', border: '1px solid #e0e0e0' }}>
-                    <h3 style={{ color: '#6F4E37', marginBottom: '1rem' }}>Sección en Mantenimiento</h3>
+                <div style={{ textAlign: 'center', padding: '4rem', backgroundColor: '#fff', borderRadius: '12px', border: '2px dashed #ccc' }}>
+                    <h3 style={{ color: '#6F4E37' }}>🚧 Sección en Construcción 🚧</h3>
                     <p style={{ color: '#666' }}>
-                        La gestión de preparaciones está deshabilitada temporalmente por ajustes de estructura.
+                        Funcionalidad deshabilitada temporalmente por mantenimiento.
                     </p>
                 </div>
             ) : (
@@ -169,68 +141,94 @@ const Products = () => {
                                 <th>Nombre</th>
                                 <th>Tipo</th>
                                 <th>Precio</th>
-                                <th style={{ textAlign: 'center' }}>Visible</th>
+                                <th>Estado Publicación</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.map(product => (
-                                <tr key={product.id_producto}>
-                                    <td>
-                                        <img
-                                            src={product.imagen || 'https://placehold.co/60x60'}
-                                            alt={product.nombre}
-                                            className="product-image"
-                                        />
-                                    </td>
-                                    <td>{product.nombre}</td>
-                                    <td>{cafeIds.has(product.id_producto) ? 'café en grano e insumo' : product.tipo_producto}</td>
-                                    <td>${product.precio?.toLocaleString('es-CL')}</td>
-                                    
-                                    <td style={{ textAlign: 'center' }}>
-                                        <button 
-                                            onClick={() => toggleVisibility(product.id_producto, product.mostrar)}
-                                            style={{ 
-                                                width: '36px',
-                                                height: '36px',
-                                                borderRadius: '8px',
-                                                border: `2px solid ${product.mostrar ? '#2e7d32' : '#c62828'}`,
-                                                backgroundColor: product.mostrar ? '#e8f5e9' : '#ffebee',
-                                                color: product.mostrar ? '#2e7d32' : '#c62828',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                cursor: 'pointer',
-                                                margin: '0 auto',
-                                                transition: 'all 0.2s',
-                                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-                                            }}
-                                            title={product.mostrar ? "Visible (Click para ocultar)" : "Oculto (Click para mostrar)"}
-                                        >
-                                            {product.mostrar ? <Check size={22} strokeWidth={3} /> : <X size={22} strokeWidth={3} />}
-                                        </button>
-                                    </td>
-                                    
-                                    <td>
-                                        <div className="actions">
-                                            <button
-                                                onClick={() => navigate(`/admin/productos/editar/${product.id_producto}`)}
-                                                className="btn-secondary"
-                                                style={{ padding: '0.5rem' }}
+                            {filteredProducts.map(product => {
+                                const isCoffee = cafeIds.has(product.id_producto);
+                                
+                                return (
+                                    <tr key={product.id_producto}>
+                                        <td>
+                                            <img
+                                                src={product.imagen || 'https://placehold.co/60x60'}
+                                                alt={product.nombre}
+                                                className="product-image"
+                                            />
+                                        </td>
+                                        <td>{product.nombre}</td>
+                                        <td>
+                                            <span style={{ 
+                                                fontSize: '0.8rem', 
+                                                padding: '2px 6px', 
+                                                borderRadius: '4px',
+                                                backgroundColor: isCoffee ? '#EFEBE9' : '#E3F2FD',
+                                                color: isCoffee ? '#5D4037' : '#1565C0',
+                                                fontWeight: 'bold'
+                                            }}>
+                                                {isCoffee ? 'CAFÉ EN GRANO' : 'INSUMO'}
+                                            </span>
+                                        </td>
+                                        <td>${product.precio?.toLocaleString('es-CL')}</td>
+                                        
+                                        <td style={{ textAlign: 'center' }}>
+                                            <button 
+                                                onClick={() => toggleVisibility(product.id_producto, product.mostrar)}
+                                                style={{ 
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '8px',
+                                                    padding: '8px 12px',
+                                                    borderRadius: '6px',
+                                                    border: `1px solid ${product.mostrar ? '#2e7d32' : '#c62828'}`,
+                                                    backgroundColor: product.mostrar ? '#e8f5e9' : '#ffebee',
+                                                    color: product.mostrar ? '#2e7d32' : '#c62828',
+                                                    cursor: 'pointer',
+                                                    fontWeight: 'bold',
+                                                    fontSize: '0.9rem',
+                                                    width: '100%',
+                                                    maxWidth: '140px',
+                                                    margin: '0 auto',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                                title={product.mostrar ? "Click para Ocultar" : "Click para Publicar"}
                                             >
-                                                <Edit size={16} />
+                                                {product.mostrar ? (
+                                                    <>
+                                                        <Check size={18} /> Publicado
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <X size={18} /> Oculto
+                                                    </>
+                                                )}
                                             </button>
-                                            <button
-                                                onClick={() => handleDelete(product.id_producto)}
-                                                className="btn-danger"
-                                                style={{ padding: '0.5rem' }}
-                                            >
-                                                <Trash2 size={16} />
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        
+                                        <td>
+                                            <div className="actions">
+                                                <button
+                                                    onClick={() => navigate(`/admin/productos/editar/${product.id_producto}`)}
+                                                    className="btn-secondary"
+                                                    style={{ padding: '0.5rem' }}
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => handleDelete(product.id_producto)}
+                                                    className="btn-danger"
+                                                    style={{ padding: '0.5rem' }}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
                         </tbody>
                     </table>
                     {filteredProducts.length === 0 && (
@@ -243,5 +241,16 @@ const Products = () => {
         </div>
     );
 };
+
+const getTabStyle = (isActive) => ({
+    padding: '10px 20px', 
+    border: 'none', 
+    background: 'none', 
+    borderBottom: isActive ? '3px solid #6F4E37' : 'none', 
+    fontWeight: isActive ? 'bold' : 'normal', 
+    color: isActive ? '#6F4E37' : '#888',
+    cursor: 'pointer',
+    transition: 'all 0.2s'
+});
 
 export default Products;
