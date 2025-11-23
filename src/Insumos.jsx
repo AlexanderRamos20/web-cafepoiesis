@@ -32,7 +32,9 @@ const InsumoCard = ({ item }) => {
     }, [item.id]);
 
     const handleAdd = () => {
-        addToCart(item.id, item.nombre, 1);
+        // Añadimos el precio como 4to argumento (ej: "$59.500")
+        addToCart(item.id, item.nombre, 1, item.precio); 
+        
         setTimeout(updateQuantity, 50);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 1500);
