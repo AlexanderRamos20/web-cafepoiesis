@@ -171,7 +171,9 @@ export default function BurbujaContactoGeneral(){
                     <Toast.Header closeButton={false}>
                         <strong className="me-auto">Café Poiesis</strong>
                     </Toast.Header>
-                    <Toast.Body className="text-white">✅ Mensaje guardado en base de datos.</Toast.Body>
+                    <Toast.Body className="text-white">
+                        ✅ ¡Mensaje enviado con éxito! Te contactaremos pronto.
+                    </Toast.Body>
                 </Toast>
             </ToastContainer>
         </>

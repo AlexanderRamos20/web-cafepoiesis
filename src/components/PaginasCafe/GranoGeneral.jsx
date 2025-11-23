@@ -42,15 +42,13 @@ const CoffeeCard = ({ coffee }) => {
         <Link to={`/cafes/${coffee.id}`} className="coffee-card-link" style={{ textDecoration: 'none' }}>
             <div className="coffee-card" style={{ position: 'relative' }}>
                 
-                {/* IMAGEN con Fallback visual */}
                 <img 
                     src={coffee.imageUrl || '/logo-cafepoiesis.jpg'} 
                     alt={coffee.name} 
                     className="coffee-image"
-                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} // Si falla la carga, muestra logo
+                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} 
                 />
                 
-                {/* PUNTITO ROJO (Badge) */}
                 {qty > 0 && (
                     <div style={{
                         position: 'absolute', top: '10px', right: '10px',
@@ -79,7 +77,7 @@ const CoffeeCard = ({ coffee }) => {
 };
 
 // --- CARRUSEL ---
-const CarouselContent = ({ items }) => (
+const CarouselContent = ({ items, carouselId }) => (
     <Carousel interval={null} indicators={false} wrap={true} variant="dark">
         {items.map((chunk, slideIndex) => (
             <Carousel.Item key={slideIndex}>
@@ -106,13 +104,13 @@ function GranoGeneral() {
                     .from('productos')
                     .select(`
                         *,
-                        cafes_en_grano (*)
-                    `)
-                    // --- CAMBIO CLAVE AQUÍ ---
-                    // Usamos .ilike con %grano% para ser flexibles
-                    // Esto encontrará "cafes_en_grano", "café en grano e insumos", "Grano", etc.
-                    .ilike('tipo_producto', '%grano%') 
-                    .eq('disponible', true);
+                        cafes_en_grano!inner (*) 
+                    `) 
+                    // ^^^ EL TRUCO ES '!inner': Esto obliga a que el producto TENGA que existir 
+                    // en la tabla 'cafes_en_grano'. Si no existe ahí, no lo trae.
+                    
+                    .eq('mostrar', true)     // Filtro de visibilidad
+                    .eq('disponible', true); // Filtro de stock/disponibilidad
 
                 if (error) throw error;
 
@@ -124,9 +122,7 @@ function GranoGeneral() {
                     return {
                         id: item.id_producto,
                         name: item.nombre,
-                        // Manejo seguro del precio
                         price: (item.precio || 0).toLocaleString('es-CL'),
-                        // Si la imagen es NULL, usamos el logo
                         imageUrl: item.imagen || '/logo-cafepoiesis.jpg',
                         notes: detalles ? detalles.notas_cata : ''
                     };
@@ -159,16 +155,16 @@ function GranoGeneral() {
             
             {coffees.length === 0 ? (
                 <div className="text-center py-5">
-                    <p>No se encontraron cafés disponibles.</p>
+                    <p>No se encontraron cafés para mostrar.</p>
                 </div>
             ) : (
                 <div className="carousel-container-wrapper">
                     <div className="d-md-none">
-                        <CarouselContent items={cafesMobile} />
+                        <CarouselContent items={cafesMobile} carouselId="carouselCafesMobile" />
                     </div>
                     
                     <div className="d-none d-md-block">
-                        <CarouselContent items={cafesDesktop} />
+                        <CarouselContent items={cafesDesktop} carouselId="carouselCafesDesktop" />
                     </div>
                 </div>
             )}

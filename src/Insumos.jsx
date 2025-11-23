@@ -29,8 +29,6 @@ const InsumoCard = ({ item }) => {
     }, [item.id]);
 
     const handleAdd = () => {
-        // El precio ya viene formateado con $, lo limpiamos o pasamos el raw si lo tuvieras
-        // Pero addToCart se encarga de limpiarlo.
         addToCart(item.id, item.nombre, 1, item.precio);
         
         setTimeout(updateQuantity, 50);
@@ -41,12 +39,11 @@ const InsumoCard = ({ item }) => {
     return (
         <div className="card h-100 card-insumo shadow-sm border-0"> 
             <div style={{ position: 'relative' }}>
-                {/* IMAGEN CON PROTECCIÓN Y FALLBACK */}
                 <img 
                     src={item.imagen || '/logo-cafepoiesis.jpg'} 
                     className="card-img-top producto-img" 
                     alt={item.nombre} 
-                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} // Si falla, muestra el logo
+                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }}
                     style={{ padding: '10px', objectFit: 'contain' }}
                 />
                 
@@ -65,7 +62,6 @@ const InsumoCard = ({ item }) => {
 
             <div className="card-body text-center d-flex flex-column p-2">
                 <h5 className="card-title fs-6">{item.nombre}</h5>
-                {/* Usamos la descripción de la BD como subtítulo */}
                 <p className="card-text text-muted small mt-auto">
                     {item.subCategoria || 'Accesorio'}
                 </p>
@@ -87,7 +83,6 @@ const InsumoCard = ({ item }) => {
     );
 };
 
-// --- CARRUSEL ---
 const CarouselContent = ({ items }) => (
     <Carousel interval={null} indicators={false} wrap={true} variant="dark">
         {items.map((chunk, i) => (
@@ -111,23 +106,37 @@ export default function Insumos() {
     useEffect(() => {
         const fetchInsumos = async () => {
             try {
+                // 1. Traemos TODOS los productos visibles
+                // Y pedimos también la relación con cafes_en_grano (LEFT JOIN)
                 const { data, error } = await supabase
                     .from('productos')
-                    .select('*')
-                    // AQUÍ ESTÁ EL TRUCO: .ilike con %insumo%
-                    // Busca cualquier cosa que contenga "insumo" (mayús o minús)
-                    .ilike('tipo_producto', '%insumo%') 
+                    .select(`
+                        *,
+                        cafes_en_grano (*)
+                    `)
+                    .eq('mostrar', true)
                     .eq('disponible', true);
 
                 if (error) throw error;
 
-                const formattedInsumos = data.map(item => ({
+                // 2. FILTRADO EN MEMORIA (Lógica de Negocio)
+                // "Si cafes_en_grano está VACÍO, entonces es un insumo/accesorio"
+                const soloInsumos = data.filter(item => {
+                    const esCafe = item.cafes_en_grano && (
+                        Array.isArray(item.cafes_en_grano) 
+                            ? item.cafes_en_grano.length > 0 
+                            : true // Si es objeto y no es null, existe
+                    );
+                    
+                    // Queremos lo que NO sea café
+                    return !esCafe;
+                });
+
+                const formattedInsumos = soloInsumos.map(item => ({
                     id: item.id_producto,
                     nombre: item.nombre,
                     subCategoria: item.descripcion, 
-                    // Manejo seguro del precio y formato
                     precio: `$${(item.precio || 0).toLocaleString('es-CL')}`, 
-                    // Si no hay imagen, usa el logo por defecto
                     imagen: item.imagen || '/logo-cafepoiesis.jpg'
                 }));
 
@@ -153,7 +162,7 @@ export default function Insumos() {
             
             {insumos.length === 0 ? (
                 <div className="text-center py-5">
-                    <p>No se encontraron insumos disponibles.</p>
+                    <p>No se encontraron productos disponibles.</p>
                 </div>
             ) : (
                 <div className="carousel-container-wrapper">
