@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 
-const IG_USER_ID = import.meta.env.VITE_IG_USER_ID;
-const IG_TOKEN   = import.meta.env.VITE_IG_ACCESS_TOKEN;
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export function useInstagramMedia(limit = 6) {
-  const [media, setMedia]   = useState([]);
+export function useInstagramMedia(limit = 3) {
+  const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchMedia() {
@@ -14,39 +14,35 @@ export function useInstagramMedia(limit = 6) {
         setLoading(true);
         setError(null);
 
-        if (!IG_USER_ID || !IG_TOKEN) {
-          throw new Error(
-            "Faltan VITE_IG_USER_ID o VITE_IG_ACCESS_TOKEN en el .env"
-          );
-        }
+        const res = await fetch(
+          `${SUPABASE_URL}/functions/v1/instagram-media?limit=${limit}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+          }
+        );
 
-        const fields = [
-          "id",
-          "caption",
-          "permalink",
-          "media_url",
-          "media_type",
-          "thumbnail_url",
-          "timestamp",
-        ].join(",");
-        
-        const url =
-          `https://graph.instagram.com/v24.0/${IG_USER_ID}/media` +
-          `?fields=${fields}` +
-          `&access_token=${IG_TOKEN}` +
-          `&limit=${limit}`;
-
-        const res  = await fetch(url);
         const data = await res.json();
 
         if (!res.ok) {
-          console.error("Respuesta de Instagram:", data);
-          throw new Error(
-            data.error?.message || "Error al llamar a Instagram Graph API"
-          );
+          throw new Error(data.error || `HTTP ${res.status}`);
         }
 
-        setMedia(data.data || []);
+        // 🔁 Normalizamos de snake_case → camelCase
+        const normalized = (data.media || []).map((m) => ({
+          id: m.id,
+          caption: m.caption,
+          permalink: m.permalink,
+          mediaUrl: m.media_url,
+          mediaType: m.media_type,
+          thumbnailUrl: m.thumbnail_url,
+          timestamp: m.timestamp,
+        }));
+
+        setMedia(normalized);
       } catch (err) {
         console.error(err);
         setError(err.message);
