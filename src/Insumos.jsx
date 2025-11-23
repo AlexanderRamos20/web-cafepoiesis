@@ -30,7 +30,6 @@ const InsumoCard = ({ item }) => {
 
     const handleAdd = () => {
         addToCart(item.id, item.nombre, 1, item.precio);
-        
         setTimeout(updateQuantity, 50);
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 1500);
@@ -43,7 +42,7 @@ const InsumoCard = ({ item }) => {
                     src={item.imagen || '/logo-cafepoiesis.jpg'} 
                     className="card-img-top producto-img" 
                     alt={item.nombre} 
-                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }}
+                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} 
                     style={{ padding: '10px', objectFit: 'contain' }}
                 />
                 
@@ -83,6 +82,7 @@ const InsumoCard = ({ item }) => {
     );
 };
 
+// --- CARRUSEL ---
 const CarouselContent = ({ items }) => (
     <Carousel interval={null} indicators={false} wrap={true} variant="dark">
         {items.map((chunk, i) => (
@@ -106,33 +106,54 @@ export default function Insumos() {
     useEffect(() => {
         const fetchInsumos = async () => {
             try {
-                // 1. Traemos TODOS los productos visibles
-                // Y pedimos también la relación con cafes_en_grano (LEFT JOIN)
-                const { data, error } = await supabase
+                // 1. Traer TODOS los productos marcados como "mostrar" en el Admin
+                const { data: productsData, error: productsError } = await supabase
                     .from('productos')
-                    .select(`
-                        *,
-                        cafes_en_grano (*)
-                    `)
-                    .eq('mostrar', true)
-                    .eq('disponible', true);
+                    .select('*')
+                    .eq('mostrar', true) // USAMOS LA COLUMNA DEL ADMIN
+                    .order('nombre', { ascending: true });
 
-                if (error) throw error;
+                if (productsError) throw productsError;
 
-                // 2. FILTRADO EN MEMORIA (Lógica de Negocio)
-                // "Si cafes_en_grano está VACÍO, entonces es un insumo/accesorio"
-                const soloInsumos = data.filter(item => {
-                    const esCafe = item.cafes_en_grano && (
-                        Array.isArray(item.cafes_en_grano) 
-                            ? item.cafes_en_grano.length > 0 
-                            : true // Si es objeto y no es null, existe
-                    );
+                // 2. Traer IDs de Cafés para excluirlos (Lista Negra de IDs)
+                const { data: cafesData, error: cafesError } = await supabase
+                    .from('cafes_en_grano')
+                    .select('id_producto');
+
+                if (cafesError) throw cafesError;
+
+                // Crear un Set para búsqueda rápida O(1)
+                const cafeIds = new Set(cafesData.map(c => c.id_producto));
+
+                // 3. Filtrado Inteligente (Réplica exacta de la lógica Admin)
+                const filteredData = productsData.filter(p => {
+                    if (!p.tipo_producto) return false;
                     
-                    // Queremos lo que NO sea café
-                    return !esCafe;
+                    // Normalizar texto
+                    const type = p.tipo_producto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+                    // A. BLOQUEO GLOBAL: Frias, Cafetería y Preparaciones FUERA.
+                    if (type.includes('fria') || type.includes('cafeteria') || type.includes('preparacion')) {
+                        return false;
+                    }
+
+                    // B. Excluir si es un Café en Grano (está en la tabla de cafés)
+                    if (cafeIds.has(p.id_producto)) return false;
+
+                    // C. Lista Blanca (Whitelist) - Solo Insumos y Accesorios
+                    const allowedCategories = [
+                        'cafe en grano e insumos',
+                        'insumos',
+                        'insumo',
+                        'accesorios',
+                        'accesorio'
+                    ];
+                    
+                    return allowedCategories.includes(type);
                 });
 
-                const formattedInsumos = soloInsumos.map(item => ({
+                // 4. Formatear para la vista
+                const formattedInsumos = filteredData.map(item => ({
                     id: item.id_producto,
                     nombre: item.nombre,
                     subCategoria: item.descripcion, 
@@ -162,7 +183,7 @@ export default function Insumos() {
             
             {insumos.length === 0 ? (
                 <div className="text-center py-5">
-                    <p>No se encontraron productos disponibles.</p>
+                    <p>No se encontraron insumos disponibles.</p>
                 </div>
             ) : (
                 <div className="carousel-container-wrapper">
