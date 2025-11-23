@@ -79,8 +79,9 @@ export default function CafeDetalle() {
         const uniqueId = `${cafeId}-${tamano}-${molienda}`;
         const fullName = `${coffee.nombre} (${tamano}, ${molienda})`;
 
-        // 3. Enviar al servicio
-        addToCart(uniqueId, fullName, cantidad);
+        // 3. Enviar al servicio (INCLUYENDO PRECIO)
+        // Pasamos el precio como 4to argumento para que se guarde en la BD
+        addToCart(uniqueId, fullName, cantidad, coffee.precio);
 
         // 4. Activar animación de confirmación
         setIsAdded(true);
@@ -96,7 +97,7 @@ export default function CafeDetalle() {
             <>
                 <Header />
                 <div style={{ padding: '80px', textAlign: 'center' }}>
-                    <h2>Cargando...</h2>
+                    <h2>Cargando... ☕</h2>
                 </div>
                 <Footer />
             </>
@@ -132,7 +133,7 @@ export default function CafeDetalle() {
                     <Col md={6}>
                         <div style={{ position: 'relative' }}>
                             <img
-                                src={coffee.imagen || 'https://placehold.co/600x600'}
+                                src={coffee.imagen || 'https://placehold.co/600x600?text=No+Image'}
                                 alt={coffee.nombre}
                                 style={{
                                     width: '100%',
@@ -171,11 +172,12 @@ export default function CafeDetalle() {
                             )}
                             <h1 style={{ fontSize: '2.5em', marginBottom: '5px' }}>{coffee.nombre}</h1>
                             <p style={{ color: '#888', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
-                                Categoría: {coffee.tipo_producto}
+                                Categoría: {coffee.tipo_producto === 'cafes_en_grano' ? 'Café en Grano' : coffee.tipo_producto}
                             </p>
                         </div>
 
                         <div style={{ marginBottom: '20px', fontSize: '1.4em', fontWeight: 'bold' }}>
+                            {/* Formateo de precio con puntos */}
                             ${coffee.precio?.toLocaleString('es-CL')} <span style={{ fontSize: '0.8em', color: "#888", fontWeight: "normal" }}>IVA incl.</span>
                         </div>
 
@@ -216,13 +218,15 @@ export default function CafeDetalle() {
 
                             {/* BOTÓN DINÁMICO */}
                             <Button
-                                variant={isAdded ? "success" : "warning"}
+                                variant={isAdded ? "success" : "warning"} // Cambia color base
                                 onClick={handleAddToCart}
-                                disabled={isAdded || !isAvailable}
+                                disabled={isAdded || !isAvailable} // Desactivar si ya se añadió o no hay stock
                                 style={{
                                     marginRight: '10px',
                                     flexGrow: 1,
-                                    ...(isAdded ? {} : { backgroundColor: '#a1887f', borderColor: '#a1887f' }),
+                                    // Si está añadido, dejamos el estilo verde por defecto de Bootstrap
+                                    // Si NO, aplicamos tu estilo café personalizado
+                                    ...(isAdded ? {} : { backgroundColor: '#a1887f', borderColor: '#a1887f', color: 'white' }),
                                     ...(!isAvailable ? { opacity: 0.5, cursor: 'not-allowed' } : {})
                                 }}
                             >
