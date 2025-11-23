@@ -18,7 +18,7 @@ export default function CafeDetalle() {
 
     // --- ESTADOS DEL FORMULARIO ---
     const [cantidad, setCantidad] = useState(1);
-    const [tamano, setTamano] = useState("");
+    // ELIMINAMOS EL ESTADO DE TAMAÑO
     const [molienda, setMolienda] = useState("");
 
     // --- ESTADO PARA ANIMACIÓN DEL BOTÓN ---
@@ -30,7 +30,6 @@ export default function CafeDetalle() {
 
     const fetchCoffeeDetails = async () => {
         try {
-            // Obtener datos del producto
             const { data: producto, error: errorProducto } = await supabase
                 .from('productos')
                 .select('*')
@@ -39,7 +38,6 @@ export default function CafeDetalle() {
 
             if (errorProducto) throw errorProducto;
 
-            // Si es café en grano, obtener detalles adicionales
             let cafeDetails = null;
             if (producto.tipo_producto === 'cafes_en_grano') {
                 const { data: cafe, error: errorCafe } = await supabase
@@ -65,28 +63,26 @@ export default function CafeDetalle() {
     };
 
     const handleAddToCart = () => {
-        // 1. Validaciones
-        if (!tamano || tamano === "Elija una opción") {
-            alert("⚠️ Por favor, selecciona un tamaño.");
-            return;
-        }
+        // 1. Validaciones (Solo Molienda es obligatoria ahora)
         if (!molienda || molienda === "Elija una opción") {
             alert("⚠️ Por favor, selecciona la molienda.");
             return;
         }
 
         // 2. Preparar datos para el carrito
-        const uniqueId = `${cafeId}-${tamano}-${molienda}`;
-        const fullName = `${coffee.nombre} (${tamano}, ${molienda})`;
+        // El ID único ahora es solo ID_PRODUCTO + MOLIENDA
+        const uniqueId = `${cafeId}-${molienda}`;
+        
+        // El nombre ya trae el peso, solo le agregamos la molienda entre paréntesis
+        const fullName = `${coffee.nombre} (${molienda})`;
 
-        // 3. Enviar al servicio (INCLUYENDO PRECIO)
-        // Pasamos el precio como 4to argumento para que se guarde en la BD
+        // 3. Enviar al servicio
         addToCart(uniqueId, fullName, cantidad, coffee.precio);
 
-        // 4. Activar animación de confirmación
+        // 4. Activar animación
         setIsAdded(true);
 
-        // 5. Restaurar botón después de 1.5 segundos
+        // 5. Restaurar botón
         setTimeout(() => {
             setIsAdded(false);
         }, 1500);
@@ -177,22 +173,12 @@ export default function CafeDetalle() {
                         </div>
 
                         <div style={{ marginBottom: '20px', fontSize: '1.4em', fontWeight: 'bold' }}>
-                            {/* Formateo de precio con puntos */}
                             ${coffee.precio?.toLocaleString('es-CL')} <span style={{ fontSize: '0.8em', color: "#888", fontWeight: "normal" }}>IVA incl.</span>
                         </div>
 
                         <Form>
-                            <Form.Group as={Row} className="mb-3" controlId="formTamaño">
-                                <Form.Label column sm="3">Tamaño:</Form.Label>
-                                <Col sm="9">
-                                    <Form.Select value={tamano} onChange={(e) => setTamano(e.target.value)}>
-                                        <option value="">Elija una opción</option>
-                                        <option value="250g">250g</option>
-                                        <option value="500g">500g</option>
-                                    </Form.Select>
-                                </Col>
-                            </Form.Group>
-
+                            {/* AQUÍ ELIMINAMOS EL SELECTOR DE TAMAÑO */}
+                            
                             <Form.Group as={Row} className="mb-3" controlId="formMolienda">
                                 <Form.Label column sm="3">Molienda:</Form.Label>
                                 <Col sm="9">
@@ -218,14 +204,12 @@ export default function CafeDetalle() {
 
                             {/* BOTÓN DINÁMICO */}
                             <Button
-                                variant={isAdded ? "success" : "warning"} // Cambia color base
+                                variant={isAdded ? "success" : "warning"}
                                 onClick={handleAddToCart}
-                                disabled={isAdded || !isAvailable} // Desactivar si ya se añadió o no hay stock
+                                disabled={isAdded || !isAvailable}
                                 style={{
                                     marginRight: '10px',
                                     flexGrow: 1,
-                                    // Si está añadido, dejamos el estilo verde por defecto de Bootstrap
-                                    // Si NO, aplicamos tu estilo café personalizado
                                     ...(isAdded ? {} : { backgroundColor: '#a1887f', borderColor: '#a1887f', color: 'white' }),
                                     ...(!isAvailable ? { opacity: 0.5, cursor: 'not-allowed' } : {})
                                 }}
@@ -272,7 +256,6 @@ export default function CafeDetalle() {
                 </Row>
             </main>
 
-            {/* BURBUJA FLOTANTE DEL CARRITO */}
             <BurbujaCarrito />
 
             <Footer />

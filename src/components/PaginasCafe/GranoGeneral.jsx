@@ -42,15 +42,13 @@ const CoffeeCard = ({ coffee }) => {
         <Link to={`/cafes/${coffee.id}`} className="coffee-card-link" style={{ textDecoration: 'none' }}>
             <div className="coffee-card" style={{ position: 'relative' }}>
                 
-                {/* IMAGEN con Fallback visual */}
                 <img 
                     src={coffee.imageUrl || '/logo-cafepoiesis.jpg'} 
                     alt={coffee.name} 
                     className="coffee-image"
-                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} // Si falla la carga, muestra logo
+                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} 
                 />
                 
-                {/* PUNTITO ROJO (Badge) */}
                 {qty > 0 && (
                     <div style={{
                         position: 'absolute', top: '10px', right: '10px',
@@ -106,17 +104,21 @@ function GranoGeneral() {
                     .from('productos')
                     .select(`
                         *,
-                        cafes_en_grano (*)
+                        cafes_en_grano (*) 
                     `)
-                    // --- CAMBIO CLAVE AQUÍ ---
-                    // Usamos .ilike con %grano% para ser flexibles
-                    // Esto encontrará "cafes_en_grano", "café en grano e insumos", "Grano", etc.
+                    // 1. Filtramos por tipo (Flexible)
                     .ilike('tipo_producto', '%grano%') 
-                    .eq('disponible', true);
+                    
+                    // 2. Filtramos que esté disponible (Stock, etc)
+                    .eq('disponible', true)
+                    
+                    // 3. NUEVO FILTRO: Solo mostramos si la columna 'mostrar' es TRUE
+                    .eq('mostrar', true); 
 
                 if (error) throw error;
 
                 const formattedCafes = data.map(item => {
+                    // Aquí ocurre el "JOIN" lógico. Extraemos los datos de la tabla relacionada
                     const detalles = Array.isArray(item.cafes_en_grano) 
                         ? item.cafes_en_grano[0] 
                         : item.cafes_en_grano;
@@ -124,10 +126,9 @@ function GranoGeneral() {
                     return {
                         id: item.id_producto,
                         name: item.nombre,
-                        // Manejo seguro del precio
                         price: (item.precio || 0).toLocaleString('es-CL'),
-                        // Si la imagen es NULL, usamos el logo
                         imageUrl: item.imagen || '/logo-cafepoiesis.jpg',
+                        // Si hay detalles en la tabla hija, sacamos las notas, si no, vacío
                         notes: detalles ? detalles.notas_cata : ''
                     };
                 });
@@ -159,7 +160,7 @@ function GranoGeneral() {
             
             {coffees.length === 0 ? (
                 <div className="text-center py-5">
-                    <p>No se encontraron cafés disponibles.</p>
+                    <p>No se encontraron cafés para mostrar.</p>
                 </div>
             ) : (
                 <div className="carousel-container-wrapper">
