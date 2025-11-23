@@ -77,7 +77,7 @@ const CoffeeCard = ({ coffee }) => {
 };
 
 // --- CARRUSEL ---
-const CarouselContent = ({ items }) => (
+const CarouselContent = ({ items, carouselId }) => (
     <Carousel interval={null} indicators={false} wrap={true} variant="dark">
         {items.map((chunk, slideIndex) => (
             <Carousel.Item key={slideIndex}>
@@ -104,21 +104,17 @@ function GranoGeneral() {
                     .from('productos')
                     .select(`
                         *,
-                        cafes_en_grano (*) 
-                    `)
-                    // 1. Filtramos por tipo (Flexible)
-                    .ilike('tipo_producto', '%grano%') 
+                        cafes_en_grano!inner (*) 
+                    `) 
+                    // ^^^ EL TRUCO ES '!inner': Esto obliga a que el producto TENGA que existir 
+                    // en la tabla 'cafes_en_grano'. Si no existe ahí, no lo trae.
                     
-                    // 2. Filtramos que esté disponible (Stock, etc)
-                    .eq('disponible', true)
-                    
-                    // 3. NUEVO FILTRO: Solo mostramos si la columna 'mostrar' es TRUE
-                    .eq('mostrar', true); 
+                    .eq('mostrar', true)     // Filtro de visibilidad
+                    .eq('disponible', true); // Filtro de stock/disponibilidad
 
                 if (error) throw error;
 
                 const formattedCafes = data.map(item => {
-                    // Aquí ocurre el "JOIN" lógico. Extraemos los datos de la tabla relacionada
                     const detalles = Array.isArray(item.cafes_en_grano) 
                         ? item.cafes_en_grano[0] 
                         : item.cafes_en_grano;
@@ -128,7 +124,6 @@ function GranoGeneral() {
                         name: item.nombre,
                         price: (item.precio || 0).toLocaleString('es-CL'),
                         imageUrl: item.imagen || '/logo-cafepoiesis.jpg',
-                        // Si hay detalles en la tabla hija, sacamos las notas, si no, vacío
                         notes: detalles ? detalles.notas_cata : ''
                     };
                 });
@@ -165,11 +160,11 @@ function GranoGeneral() {
             ) : (
                 <div className="carousel-container-wrapper">
                     <div className="d-md-none">
-                        <CarouselContent items={cafesMobile} />
+                        <CarouselContent items={cafesMobile} carouselId="carouselCafesMobile" />
                     </div>
                     
                     <div className="d-none d-md-block">
-                        <CarouselContent items={cafesDesktop} />
+                        <CarouselContent items={cafesDesktop} carouselId="carouselCafesDesktop" />
                     </div>
                 </div>
             )}

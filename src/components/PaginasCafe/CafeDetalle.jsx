@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Row, Col, Button, Form, Accordion } from 'react-bootstrap';
+import { Row, Col, Button, Form, Accordion, Badge } from 'react-bootstrap';
 
 // IMPORTACIONES DE COMPONENTES
+// Se agregan extensiones explícitas para evitar errores de resolución
 import Header from '../header.jsx';
 import Footer from '../footer.jsx';
-import BurbujaCarrito from '../BurbujaCarrito';
+import BurbujaCarrito from '../BurbujaCarrito.jsx';
 
 // IMPORTACIÓN DEL SERVICIO
-import { addToCart } from '../../firebaseCartService';
-import { supabase } from '../../supabaseClient';
+import { addToCart } from '../../firebaseCartService.js';
+import { supabase } from '../../supabaseClient.js';
 
 export default function CafeDetalle() {
     const { cafeId } = useParams();
@@ -18,71 +19,56 @@ export default function CafeDetalle() {
 
     // --- ESTADOS DEL FORMULARIO ---
     const [cantidad, setCantidad] = useState(1);
-    // ELIMINAMOS EL ESTADO DE TAMAÑO
     const [molienda, setMolienda] = useState("");
 
     // --- ESTADO PARA ANIMACIÓN DEL BOTÓN ---
     const [isAdded, setIsAdded] = useState(false);
 
     useEffect(() => {
-        fetchCoffeeDetails();
-    }, [cafeId]);
-
-    const fetchCoffeeDetails = async () => {
-        try {
-            const { data: producto, error: errorProducto } = await supabase
-                .from('productos')
-                .select('*')
-                .eq('id_producto', cafeId)
-                .single();
-
-            if (errorProducto) throw errorProducto;
-
-            let cafeDetails = null;
-            if (producto.tipo_producto === 'cafes_en_grano') {
-                const { data: cafe, error: errorCafe } = await supabase
-                    .from('cafes_en_grano')
-                    .select('*')
+        const fetchCoffeeDetails = async () => {
+            try {
+                const { data, error } = await supabase
+                    .from('productos')
+                    .select(`
+                        *,
+                        cafes_en_grano (*)
+                    `)
                     .eq('id_producto', cafeId)
                     .single();
 
-                if (!errorCafe && cafe) {
-                    cafeDetails = cafe;
-                }
-            }
+                if (error) throw error;
 
-            setCoffee({
-                ...producto,
-                cafeDetails
-            });
-        } catch (error) {
-            console.error('Error fetching coffee details:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+                const detallesTecnicos = Array.isArray(data.cafes_en_grano) 
+                    ? data.cafes_en_grano[0] 
+                    : data.cafes_en_grano;
+
+                setCoffee({
+                    ...data,
+                    technical: detallesTecnicos || {} 
+                });
+
+            } catch (error) {
+                console.error('Error al cargar el café:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCoffeeDetails();
+    }, [cafeId]);
 
     const handleAddToCart = () => {
-        // 1. Validaciones (Solo Molienda es obligatoria ahora)
         if (!molienda || molienda === "Elija una opción") {
             alert("⚠️ Por favor, selecciona la molienda.");
             return;
         }
 
-        // 2. Preparar datos para el carrito
-        // El ID único ahora es solo ID_PRODUCTO + MOLIENDA
         const uniqueId = `${cafeId}-${molienda}`;
-        
-        // El nombre ya trae el peso, solo le agregamos la molienda entre paréntesis
         const fullName = `${coffee.nombre} (${molienda})`;
 
-        // 3. Enviar al servicio
         addToCart(uniqueId, fullName, cantidad, coffee.precio);
 
-        // 4. Activar animación
         setIsAdded(true);
-
-        // 5. Restaurar botón
         setTimeout(() => {
             setIsAdded(false);
         }, 1500);
@@ -92,8 +78,8 @@ export default function CafeDetalle() {
         return (
             <>
                 <Header />
-                <div style={{ padding: '80px', textAlign: 'center' }}>
-                    <h2>Cargando... ☕</h2>
+                <div style={{ padding: '80px', textAlign: 'center', minHeight: '60vh' }}>
+                    <h2>Cargando aroma... ☕</h2>
                 </div>
                 <Footer />
             </>
@@ -104,8 +90,8 @@ export default function CafeDetalle() {
         return (
             <>
                 <Header />
-                <div style={{ padding: '80px', textAlign: 'center' }}>
-                    <h2>Error: Café no encontrado</h2>
+                <div style={{ padding: '80px', textAlign: 'center', minHeight: '60vh' }}>
+                    <h2>Café no encontrado</h2>
                     <Link to="/"><Button variant="primary">Volver al Menú</Button></Link>
                 </div>
                 <Footer />
@@ -125,31 +111,26 @@ export default function CafeDetalle() {
                 </Link>
 
                 <Row>
-                    {/* COLUMNA IZQUIERDA: IMAGEN */}
-                    <Col md={6}>
+                    <Col md={6} className="mb-4">
                         <div style={{ position: 'relative' }}>
                             <img
                                 src={coffee.imagen || 'https://placehold.co/600x600?text=No+Image'}
                                 alt={coffee.nombre}
                                 style={{
                                     width: '100%',
-                                    borderRadius: '10px',
-                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                                    opacity: isAvailable ? 1 : 0.7
+                                    borderRadius: '15px',
+                                    boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                                    opacity: isAvailable ? 1 : 0.7,
+                                    objectFit: 'cover'
                                 }}
                             />
                             {!isAvailable && (
                                 <div style={{
                                     position: 'absolute',
-                                    bottom: '20px',
-                                    left: '50%',
-                                    transform: 'translateX(-50%)',
-                                    backgroundColor: '#d32f2f',
-                                    color: 'white',
-                                    padding: '10px 30px',
-                                    borderRadius: '8px',
-                                    fontWeight: 'bold',
-                                    fontSize: '1.2em',
+                                    bottom: '20px', left: '50%', transform: 'translateX(-50%)',
+                                    backgroundColor: '#d32f2f', color: 'white',
+                                    padding: '10px 30px', borderRadius: '8px',
+                                    fontWeight: 'bold', fontSize: '1.2em',
                                     boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
                                 }}>
                                     AGOTADO
@@ -158,93 +139,113 @@ export default function CafeDetalle() {
                         </div>
                     </Col>
 
-                    {/* COLUMNA DERECHA: DATOS */}
-                    <Col md={6} style={{ paddingLeft: '40px' }}>
-                        <div style={{ marginBottom: '20px' }}>
+                    <Col md={6} style={{ paddingLeft: '2rem' }}>
+                        <div style={{ marginBottom: '1.5rem' }}>
                             {isAvailable ? (
-                                <span style={{ color: '#4CAF50', fontWeight: 'bold' }}>DISPONIBLE</span>
+                                <Badge bg="success" className="mb-2">DISPONIBLE</Badge>
                             ) : (
-                                <span style={{ color: '#d32f2f', fontWeight: 'bold' }}>NO DISPONIBLE</span>
+                                <Badge bg="danger" className="mb-2">SIN STOCK</Badge>
                             )}
-                            <h1 style={{ fontSize: '2.5em', marginBottom: '5px' }}>{coffee.nombre}</h1>
-                            <p style={{ color: '#888', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
-                                Categoría: {coffee.tipo_producto === 'cafes_en_grano' ? 'Café en Grano' : coffee.tipo_producto}
+                            
+                            <h1 style={{ fontSize: '2.5em', fontWeight: 'bold', color: '#2c2c2c' }}>
+                                {coffee.nombre}
+                            </h1>
+                            <p style={{ color: '#6c757d', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+                                Categoría: {coffee.tipo_producto === 'cafes_en_grano' ? 'Café de Especialidad' : coffee.tipo_producto}
                             </p>
                         </div>
 
-                        <div style={{ marginBottom: '20px', fontSize: '1.4em', fontWeight: 'bold' }}>
-                            ${coffee.precio?.toLocaleString('es-CL')} <span style={{ fontSize: '0.8em', color: "#888", fontWeight: "normal" }}>IVA incl.</span>
+                        <div style={{ marginBottom: '2rem' }}>
+                            <span style={{ fontSize: '2em', fontWeight: 'bold', color: '#4e342e' }}>
+                                ${coffee.precio?.toLocaleString('es-CL')}
+                            </span>
+                            <span style={{ fontSize: '0.9em', color: "#888", marginLeft: '10px' }}>IVA incluido</span>
                         </div>
 
                         <Form>
-                            {/* AQUÍ ELIMINAMOS EL SELECTOR DE TAMAÑO */}
-                            
-                            <Form.Group as={Row} className="mb-3" controlId="formMolienda">
-                                <Form.Label column sm="3">Molienda:</Form.Label>
+                            <Form.Group as={Row} className="mb-3 align-items-center" controlId="formMolienda">
+                                <Form.Label column sm="3" style={{ fontWeight: '500' }}>Molienda:</Form.Label>
                                 <Col sm="9">
-                                    <Form.Select value={molienda} onChange={(e) => setMolienda(e.target.value)}>
-                                        <option value="">Elija una opción</option>
+                                    <Form.Select 
+                                        value={molienda} 
+                                        onChange={(e) => setMolienda(e.target.value)}
+                                        style={{ borderColor: '#a1887f' }}
+                                    >
+                                        <option value="">Selecciona tipo de molienda...</option>
                                         <option value="Grano entero">Grano entero</option>
                                         <option value="Molienda Fina">Molienda Fina (Espresso)</option>
+                                        <option value="Molienda Media">Molienda Media (V60 / Cafetera)</option>
                                         <option value="Molienda Gruesa">Molienda Gruesa (Prensa Francesa)</option>
                                     </Form.Select>
                                 </Col>
                             </Form.Group>
                         </Form>
 
-                        <div style={{ display: 'flex', marginTop: '30px' }}>
+                        <div style={{ display: 'flex', marginTop: '20px', gap: '10px' }}>
                             <Form.Control
                                 type="number"
                                 value={cantidad}
                                 min={1}
                                 onChange={(e) => setCantidad(Number(e.target.value))}
-                                style={{ width: '70px', marginRight: '10px' }}
+                                style={{ width: '80px', borderColor: '#a1887f' }}
                                 disabled={!isAvailable}
                             />
 
-                            {/* BOTÓN DINÁMICO */}
                             <Button
                                 variant={isAdded ? "success" : "warning"}
                                 onClick={handleAddToCart}
                                 disabled={isAdded || !isAvailable}
                                 style={{
-                                    marginRight: '10px',
                                     flexGrow: 1,
-                                    ...(isAdded ? {} : { backgroundColor: '#a1887f', borderColor: '#a1887f', color: 'white' }),
-                                    ...(!isAvailable ? { opacity: 0.5, cursor: 'not-allowed' } : {})
+                                    fontWeight: 'bold',
+                                    color: 'white',
+                                    ...(isAdded ? {} : { backgroundColor: '#a1887f', borderColor: '#a1887f' }),
+                                    ...(!isAvailable ? { opacity: 0.6, cursor: 'not-allowed' } : {})
                                 }}
                             >
-                                {!isAvailable ? "No disponible" : (isAdded ? "¡Añadido! ✔" : "Añadir al carrito")}
+                                {!isAvailable ? "No disponible" : (isAdded ? "¡Añadido al Carrito! ✔" : "Añadir al Carrito")}
                             </Button>
                         </div>
 
-                        <div style={{ marginTop: '30px', paddingTop: '20px' }}>
+                        <div style={{ marginTop: '40px' }}>
                             <Accordion defaultActiveKey="0">
                                 <Accordion.Item eventKey="0">
-                                    <Accordion.Header>Descripción</Accordion.Header>
-                                    <Accordion.Body>
-                                        <p>{coffee.descripcion || 'Sin descripción disponible'}</p>
+                                    <Accordion.Header>Historia & Descripción</Accordion.Header>
+                                    <Accordion.Body style={{ lineHeight: '1.6', color: '#555' }}>
+                                        {coffee.descripcion || 'Una selección especial de Café Poiesis.'}
                                     </Accordion.Body>
                                 </Accordion.Item>
-                                {coffee.cafeDetails && (
+
+                                {coffee.technical && (
                                     <Accordion.Item eventKey="1">
-                                        <Accordion.Header>Detalles del Café</Accordion.Header>
+                                        <Accordion.Header>Ficha Técnica (Origen, Altura...)</Accordion.Header>
                                         <Accordion.Body>
-                                            <ul style={{ listStyle: 'none', paddingLeft: '0', marginTop: '10px' }}>
-                                                {coffee.cafeDetails.origen && (
-                                                    <li><strong>Origen:</strong> {coffee.cafeDetails.origen}</li>
+                                            <ul style={{ listStyle: 'none', padding: 0 }}>
+                                                {coffee.technical.origen && (
+                                                    <li className="mb-2">
+                                                        🌍 <strong>Origen:</strong> {coffee.technical.origen}
+                                                    </li>
                                                 )}
-                                                {coffee.cafeDetails.altura_metros && (
-                                                    <li><strong>Altura:</strong> {coffee.cafeDetails.altura_metros} m.s.n.m.</li>
+                                                {coffee.technical.altura_metros && (
+                                                    <li className="mb-2">
+                                                        ⛰️ <strong>Altura:</strong> {coffee.technical.altura_metros} m.s.n.m.
+                                                    </li>
                                                 )}
-                                                {coffee.cafeDetails.proceso_beneficio && (
-                                                    <li><strong>Proceso:</strong> {coffee.cafeDetails.proceso_beneficio}</li>
+                                                {coffee.technical.variedad && (
+                                                    <li className="mb-2">
+                                                        🌱 <strong>Variedad:</strong> {coffee.technical.variedad}
+                                                    </li>
                                                 )}
-                                                {coffee.cafeDetails.variedad && (
-                                                    <li><strong>Variedad:</strong> {coffee.cafeDetails.variedad}</li>
+                                                {coffee.technical.proceso_beneficio && (
+                                                    <li className="mb-2">
+                                                        ⚙️ <strong>Proceso:</strong> {coffee.technical.proceso_beneficio}
+                                                    </li>
                                                 )}
-                                                {coffee.cafeDetails.notas_cata && (
-                                                    <li><strong>Notas de Cata:</strong> {coffee.cafeDetails.notas_cata}</li>
+                                                {coffee.technical.notas_cata && (
+                                                    <li className="mt-3 p-2 bg-light rounded border-start border-4 border-warning">
+                                                        🍊 <strong>Notas de Cata:</strong><br/>
+                                                        {coffee.technical.notas_cata}
+                                                    </li>
                                                 )}
                                             </ul>
                                         </Accordion.Body>
@@ -257,7 +258,6 @@ export default function CafeDetalle() {
             </main>
 
             <BurbujaCarrito />
-
             <Footer />
         </>
     );

@@ -106,20 +106,33 @@ export default function Insumos() {
     useEffect(() => {
         const fetchInsumos = async () => {
             try {
+                // 1. Traemos TODOS los productos visibles
+                // Y pedimos también la relación con cafes_en_grano (LEFT JOIN)
                 const { data, error } = await supabase
                     .from('productos')
-                    .select('*')
-                    // 1. REGLAS DE VISIBILIDAD
+                    .select(`
+                        *,
+                        cafes_en_grano (*)
+                    `)
                     .eq('mostrar', true)
-                    .eq('disponible', true)
-                    
-                    // 2. REGLAS DE EXCLUSIÓN TOTAL (Con y Sin tilde)
-                    .not('tipo_producto', 'ilike', '%cafe%')  // Saca "cafe", "Cafe"
-                    .not('tipo_producto', 'ilike', '%café%'); // Saca "café", "Café"
+                    .eq('disponible', true);
 
                 if (error) throw error;
 
-                const formattedInsumos = data.map(item => ({
+                // 2. FILTRADO EN MEMORIA (Lógica de Negocio)
+                // "Si cafes_en_grano está VACÍO, entonces es un insumo/accesorio"
+                const soloInsumos = data.filter(item => {
+                    const esCafe = item.cafes_en_grano && (
+                        Array.isArray(item.cafes_en_grano) 
+                            ? item.cafes_en_grano.length > 0 
+                            : true // Si es objeto y no es null, existe
+                    );
+                    
+                    // Queremos lo que NO sea café
+                    return !esCafe;
+                });
+
+                const formattedInsumos = soloInsumos.map(item => ({
                     id: item.id_producto,
                     nombre: item.nombre,
                     subCategoria: item.descripcion, 
