@@ -4,9 +4,6 @@ import './Insumos.css';
 import { addToCart, getProductQuantity } from './firebaseCartService'; 
 import { supabase } from './supabaseClient'; 
 
-// YA NO NECESITAS IMPORTAR LAS IMÁGENES AQUÍ
-// El componente las buscará automáticamente en la carpeta public
-
 const chunkArray = (array, size) => {
     const chunkedArr = [];
     for (let i = 0; i < array.length; i += size) {
@@ -32,8 +29,9 @@ const InsumoCard = ({ item }) => {
     }, [item.id]);
 
     const handleAdd = () => {
-        // Añadimos el precio como 4to argumento (ej: "$59.500")
-        addToCart(item.id, item.nombre, 1, item.precio); 
+        // El precio ya viene formateado con $, lo limpiamos o pasamos el raw si lo tuvieras
+        // Pero addToCart se encarga de limpiarlo.
+        addToCart(item.id, item.nombre, 1, item.precio);
         
         setTimeout(updateQuantity, 50);
         setIsAdded(true);
@@ -43,13 +41,12 @@ const InsumoCard = ({ item }) => {
     return (
         <div className="card h-100 card-insumo shadow-sm border-0"> 
             <div style={{ position: 'relative' }}>
-                {/* La imagen se carga directo desde la URL de la base de datos */}
+                {/* IMAGEN CON PROTECCIÓN Y FALLBACK */}
                 <img 
-                    src={item.imagen} 
+                    src={item.imagen || '/logo-cafepoiesis.jpg'} 
                     className="card-img-top producto-img" 
                     alt={item.nombre} 
-                    // Fallback por si la imagen no se encuentra en public
-                    onError={(e) => { e.target.src = 'https://placehold.co/300x300?text=Imagen+No+Encontrada'; }}
+                    onError={(e) => { e.target.src = '/logo-cafepoiesis.jpg'; }} // Si falla, muestra el logo
                     style={{ padding: '10px', objectFit: 'contain' }}
                 />
                 
@@ -68,7 +65,10 @@ const InsumoCard = ({ item }) => {
 
             <div className="card-body text-center d-flex flex-column p-2">
                 <h5 className="card-title fs-6">{item.nombre}</h5>
-                <p className="card-text text-muted small mt-auto">{item.subCategoria}</p>
+                {/* Usamos la descripción de la BD como subtítulo */}
+                <p className="card-text text-muted small mt-auto">
+                    {item.subCategoria || 'Accesorio'}
+                </p>
                 <p className="card-text fw-bold">{item.precio}</p>
                 
                 <div className='d-grid gap-2'>
@@ -87,6 +87,7 @@ const InsumoCard = ({ item }) => {
     );
 };
 
+// --- CARRUSEL ---
 const CarouselContent = ({ items }) => (
     <Carousel interval={null} indicators={false} wrap={true} variant="dark">
         {items.map((chunk, i) => (
@@ -113,7 +114,9 @@ export default function Insumos() {
                 const { data, error } = await supabase
                     .from('productos')
                     .select('*')
-                    .eq('tipo_producto', 'insumo') 
+                    // AQUÍ ESTÁ EL TRUCO: .ilike con %insumo%
+                    // Busca cualquier cosa que contenga "insumo" (mayús o minús)
+                    .ilike('tipo_producto', '%insumo%') 
                     .eq('disponible', true);
 
                 if (error) throw error;
@@ -122,13 +125,15 @@ export default function Insumos() {
                     id: item.id_producto,
                     nombre: item.nombre,
                     subCategoria: item.descripcion, 
-                    precio: `$${item.precio.toLocaleString('es-CL')}`, 
-                    imagen: item.imagen // Esto será "/aeropress.jpg"
+                    // Manejo seguro del precio y formato
+                    precio: `$${(item.precio || 0).toLocaleString('es-CL')}`, 
+                    // Si no hay imagen, usa el logo por defecto
+                    imagen: item.imagen || '/logo-cafepoiesis.jpg'
                 }));
 
                 setInsumos(formattedInsumos);
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error cargando insumos:", error);
             } finally {
                 setLoading(false);
             }
@@ -140,14 +145,16 @@ export default function Insumos() {
     const insumosMobile = chunkArray(insumos, 1);
     const insumosDesktop = chunkArray(insumos, 3);
 
-    if (loading) return <div className="text-center py-5">Cargando accesorios... ⚙️</div>;
+    if (loading) return <div className="text-center py-5 my-5">Cargando accesorios... ⚙️</div>;
 
     return (
         <section id="seccion-insumos" className="insumos container py-5">
             <h2 className="text-center mb-4">Insumos y Accesorios</h2>
             
             {insumos.length === 0 ? (
-                <p className="text-center">No hay insumos disponibles.</p>
+                <div className="text-center py-5">
+                    <p>No se encontraron insumos disponibles.</p>
+                </div>
             ) : (
                 <div className="carousel-container-wrapper">
                     <div className="d-md-none">
