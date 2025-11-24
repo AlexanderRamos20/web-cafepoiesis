@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
-import { Plus, Edit, Trash2, Check, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Check, X, Lock } from 'lucide-react';
 
 const Products = () => {
     const navigate = useNavigate();
@@ -74,9 +74,24 @@ const Products = () => {
     };
 
     const filteredProducts = products.filter(p => {
+        // 1. Pestaña LOYVERSE: Solo productos con ID externo
+        if (activeTab === 'loyverse') {
+            return p.id_loyverse != null;
+        }
+
+        // Si tiene ID de Loyverse, NO lo mostramos en las otras pestañas para evitar duplicados visuales
+        if (p.id_loyverse != null && activeTab !== 'todos') return false;
+
         if (activeTab === 'todos') return true;
-        if (activeTab === 'cafes_en_grano') return cafeIds.has(p.id_producto);
-        if (activeTab === 'insumo') return !cafeIds.has(p.id_producto);
+
+        if (activeTab === 'cafes_en_grano') {
+            return cafeIds.has(p.id_producto);
+        }
+
+        if (activeTab === 'insumo') {
+            return !cafeIds.has(p.id_producto);
+        }
+
         return false; 
     });
 
@@ -117,6 +132,13 @@ const Products = () => {
                     Insumos
                 </button>
                 <button
+                    className={`tab-button ${activeTab === 'loyverse' ? 'active' : ''}`}
+                    onClick={() => setActiveTab('loyverse')}
+                    style={getTabStyle(activeTab === 'loyverse')}
+                >
+                    Loyverse
+                </button>
+                <button
                     className={`tab-button ${activeTab === 'preparacion' ? 'active' : ''}`}
                     onClick={() => setActiveTab('preparacion')}
                     style={getTabStyle(activeTab === 'preparacion')}
@@ -139,7 +161,7 @@ const Products = () => {
                             <tr>
                                 <th>Imagen</th>
                                 <th>Nombre</th>
-                                <th>Tipo</th>
+                                <th>Tipo (DB)</th>
                                 <th>Precio</th>
                                 <th>Estado Publicación</th>
                                 <th>Acciones</th>
@@ -148,17 +170,36 @@ const Products = () => {
                         <tbody>
                             {filteredProducts.map(product => {
                                 const isCoffee = cafeIds.has(product.id_producto);
+                                const isLoyverseItem = product.id_loyverse != null;
                                 
                                 return (
                                     <tr key={product.id_producto}>
                                         <td>
-                                            <img
-                                                src={product.imagen || 'https://placehold.co/60x60'}
-                                                alt={product.nombre}
-                                                className="product-image"
-                                            />
+                                            <div style={{ position: 'relative', width: '60px', height: '60px' }}>
+                                                <img
+                                                    src={product.imagen || 'https://placehold.co/60x60'}
+                                                    alt={product.nombre}
+                                                    className="product-image"
+                                                />
+                                                {isLoyverseItem && (
+                                                    <div style={{ 
+                                                        position: 'absolute', 
+                                                        bottom: '-5px', 
+                                                        right: '-5px', 
+                                                        background: '#FF9800', 
+                                                        borderRadius: '50%', 
+                                                        padding: '3px',
+                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                                    }} title="Sincronizado con Loyverse">
+                                                        <Lock size={12} color="white" />
+                                                    </div>
+                                                )}
+                                            </div>
                                         </td>
-                                        <td>{product.nombre}</td>
+                                        <td>
+                                            {product.nombre}
+                                            {isLoyverseItem && <div style={{ fontSize: '0.7rem', color: '#FF9800' }}>Sincronizado con Loyverse</div>}
+                                        </td>
                                         <td>
                                             <span style={{ 
                                                 fontSize: '0.8rem', 
@@ -168,7 +209,7 @@ const Products = () => {
                                                 color: isCoffee ? '#5D4037' : '#1565C0',
                                                 fontWeight: 'bold'
                                             }}>
-                                                {isCoffee ? 'CAFÉ EN GRANO' : 'INSUMO'}
+                                                {isCoffee ? 'CAFÉ' : 'INSUMO'}
                                             </span>
                                         </td>
                                         <td>${product.precio?.toLocaleString('es-CL')}</td>
@@ -182,7 +223,7 @@ const Products = () => {
                                                     justifyContent: 'center',
                                                     gap: '8px',
                                                     padding: '8px 12px',
-                                                    borderRadius: '6px',
+                                                    borderRadius: '6px', 
                                                     border: `1px solid ${product.mostrar ? '#2e7d32' : '#c62828'}`,
                                                     backgroundColor: product.mostrar ? '#e8f5e9' : '#ffebee',
                                                     color: product.mostrar ? '#2e7d32' : '#c62828',
@@ -210,20 +251,30 @@ const Products = () => {
                                         
                                         <td>
                                             <div className="actions">
-                                                <button
-                                                    onClick={() => navigate(`/admin/productos/editar/${product.id_producto}`)}
-                                                    className="btn-secondary"
-                                                    style={{ padding: '0.5rem' }}
-                                                >
-                                                    <Edit size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(product.id_producto)}
-                                                    className="btn-danger"
-                                                    style={{ padding: '0.5rem' }}
-                                                >
-                                                    <Trash2 size={16} />
-                                                </button>
+                                                {isLoyverseItem ? (
+                                                    <span style={{ fontSize: '0.8rem', color: '#999', fontStyle: 'italic', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <Lock size={14} /> Protegido
+                                                    </span>
+                                                ) : (
+                                                    <>
+                                                        <button
+                                                            onClick={() => navigate(`/admin/productos/editar/${product.id_producto}`)}
+                                                            className="btn-secondary"
+                                                            style={{ padding: '0.5rem' }}
+                                                            title="Editar"
+                                                        >
+                                                            <Edit size={16} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(product.id_producto)}
+                                                            className="btn-danger"
+                                                            style={{ padding: '0.5rem' }}
+                                                            title="Eliminar"
+                                                        >
+                                                            <Trash2 size={16} />
+                                                        </button>
+                                                    </>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

@@ -12,6 +12,7 @@ const ProductForm = () => {
         descripcion: '',
         precio: '',
         tipo_producto: 'cafes_en_grano',
+        subtipo_preparacion: 'Frias',
         imagen: '',
         mostrar: false,
         origen: '',
@@ -65,6 +66,7 @@ const ProductForm = () => {
                 tipo_producto: (product.tipo_producto === 'cafes_en_grano' || (product.tipo_producto && product.tipo_producto.includes('café en grano')))
                     ? 'cafes_en_grano'
                     : product.tipo_producto || 'otro',
+                subtipo_preparacion: product.subtipo_preparacion || 'Frias',
                 imagen: product.imagen || '',
                 mostrar: product.mostrar || false,
                 origen: '',
@@ -100,7 +102,11 @@ const ProductForm = () => {
                 nombre: formData.nombre,
                 descripcion: formData.descripcion,
                 precio: parseFloat(formData.precio),
-                tipo_producto: isCoffee ? 'café en grano e insumo' : formData.tipo_producto,
+                tipo_producto: formData.tipo_producto === 'preparaciones'
+                    ? formData.subtipo_preparacion
+                    : isCoffee
+                        ? 'café en grano e insumo'
+                        : formData.tipo_producto,
                 imagen: formData.imagen,
                 mostrar: formData.mostrar
             };
@@ -137,7 +143,9 @@ const ProductForm = () => {
                     .from('cafes_en_grano')
                     .upsert(cafeData);
 
-                if (error) throw error;
+                if (error) {
+                    throw error;
+                }
             } else if (isEditMode) {
                 await supabase.from('cafes_en_grano').delete().eq('id_producto', productId);
             }

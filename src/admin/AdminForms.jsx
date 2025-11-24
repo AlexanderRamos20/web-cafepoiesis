@@ -30,20 +30,35 @@ const AdminForms = () => {
     };
 
     const handleDelete = async (id_mensaje) => {
-        if (!confirm('¿Estás seguro de eliminar este mensaje?')) return;
+        if (!id_mensaje) return;
+        if (!confirm('¿Estás seguro de eliminar este mensaje permanentemente?')) return;
 
         try {
-            const { error } = await supabase
+            // SOLUCIÓN TECH LEAD: Pedimos 'count: exact' para saber si REALMENTE se borró
+            const { error, count } = await supabase
                 .from('formulario_contacto')
-                .delete()
+                .delete({ count: 'exact' }) 
                 .eq('id_mensaje', id_mensaje);
 
             if (error) throw error;
 
-            fetchForms();
+            // Si count es 0, es porque la BD bloqueó el borrado (RLS)
+            if (count === 0) {
+                alert('ERROR DE PERMISOS: Supabase no permitió borrar el mensaje. Revisa las Políticas RLS en la tabla formulario_contacto.');
+                return; // Cancelamos la actualización visual
+            }
+
+            // Solo si se borró de verdad, actualizamos la pantalla
+            setForms(prev => prev.filter(form => form.id_mensaje !== id_mensaje));
+            
+            if (selectedForm && selectedForm.id_mensaje === id_mensaje) {
+                setShowModal(false);
+                setSelectedForm(null);
+            }
+            
         } catch (error) {
             console.error(error);
-            alert('Error al eliminar el mensaje');
+            alert('Error al eliminar el mensaje: ' + error.message);
         }
     };
 
@@ -69,7 +84,9 @@ const AdminForms = () => {
         }
     };
 
-    if (loading) return <div>Cargando formularios...</div>;
+    if (loading) {
+        return <div>Cargando formularios...</div>;
+    }
 
     return (
         <div>
@@ -130,14 +147,16 @@ const AdminForms = () => {
                                             style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                                             title="Ver detalles completos"
                                         >
-                                            <Eye size={16} /> Ver
+                                            <Eye size={16} />
+                                            Ver
                                         </button>
                                         <button
                                             onClick={() => handleDelete(form.id_mensaje)}
                                             className="btn-danger"
                                             title="Eliminar mensaje"
                                         >
-                                            <Trash2 size={16} /> Eliminar
+                                            <Trash2 size={16} />
+                                            Eliminar
                                         </button>
                                     </div>
                                 </td>
@@ -239,13 +258,11 @@ const AdminForms = () => {
                                 Cerrar
                             </button>
                             <button
-                                onClick={() => {
-                                    handleDelete(selectedForm.id_mensaje);
-                                    setShowModal(false);
-                                }}
+                                onClick={() => handleDelete(selectedForm.id_mensaje)}
                                 className="btn-danger"
                             >
-                                <Trash2 size={16} /> Eliminar
+                                <Trash2 size={16} />
+                                Eliminar
                             </button>
                         </div>
                     </div>
