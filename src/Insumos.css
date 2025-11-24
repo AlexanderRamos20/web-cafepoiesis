@@ -1,0 +1,22 @@
+.insumos h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #4e342e;
+}
+
+.card-insumo {
+  width: 100%;
+  max-width: 18rem;
+  margin: 0 auto;
+}
+
+.producto-img {
+  height: 120px;
+  object-fit: cover;
+}
+
+@media (min-width: 768px) {
+  .producto-img {
+    height: 200px;
+  }
+}
