@@ -18,13 +18,12 @@ function truncate(text, max = 120) {
 
 export default function InstagramFeedLite({
   media = [],
-  limit = 6,
-  columns = { base: 2, md: 3, lg: 4 },
+  limit = 3,
+  columns = { base: 2, md: 3, lg: 3 },
   className = "",
   loading = false,
   username = "cafepoiesis",
   profileUrl = "https://www.instagram.com/cafepoiesis/",
-  profileInitials = "Cp",
 }) {
   const list = media.slice(0, limit);
 
@@ -50,15 +49,23 @@ export default function InstagramFeedLite({
       )}
 
       {list.map((item) => {
-        const isVideo = item.media_type === "VIDEO";
-        const thumb   = item.thumbnail_url || item.media_url;
+        const isVideo = item.mediaType === "VIDEO";
+        const thumb = item.thumbnailUrl || item.mediaUrl;
         const caption = truncate(item.caption);
 
         return (
           <article className="ig-card" key={item.id}>
             <header className="ig-card-header">
               <div className="ig-avatar">
-                <span><img src="/logo-cafepoiesis.jpg" alt="Logo Café Poiesis" width="30" height="30" className="me-2 rounded-circle" /></span>
+                <span>
+                  <img
+                    src="/logo-cafepoiesis.jpg"
+                    alt="Logo Café Poiesis"
+                    width="30"
+                    height="30"
+                    className="me-2 rounded-circle"
+                  />
+                </span>
               </div>
               <div className="ig-header-text">
                 <span className="ig-username">{username}</span>
@@ -73,31 +80,39 @@ export default function InstagramFeedLite({
               </a>
             </header>
 
-            <a
-              href={item.permalink}
-              target="_blank"
-              rel="noreferrer"
-              className="ig-media-link"
-            >
-              <div className="ig-media-wrapper">
-                {isVideo ? (
-                  <>
-                    <img
-                      src={thumb}
-                      alt={item.caption || "Publicación de Instagram (video)"}
-                      loading="lazy"
-                    />
-                    <span className="ig-badge-play">▶</span>
-                  </>
-                ) : (
+            {isVideo ? (
+              // 👉 VIDEO: sin <a>, solo se reproduce
+              <div className="ig-media-link">
+                <div className="ig-media-wrapper">
+                  <video
+                    className="ig-video"
+                    src={item.mediaUrl}
+                    poster={item.thumbnailUrl || undefined}
+                    playsInline
+                    muted
+                    loop
+                    controls
+                  />
+                  <span className="ig-badge-play">▶</span>
+                </div>
+              </div>
+            ) : (
+              // 👉 IMAGEN: mantiene el link a Instagram
+              <a
+                href={item.permalink}
+                target="_blank"
+                rel="noreferrer"
+                className="ig-media-link"
+              >
+                <div className="ig-media-wrapper">
                   <img
-                    src={item.media_url}
+                    src={item.mediaUrl}
                     alt={item.caption || "Publicación de Instagram"}
                     loading="lazy"
                   />
-                )}
-              </div>
-            </a>
+                </div>
+              </a>
+            )}
 
             <footer className="ig-card-footer">
               <a
