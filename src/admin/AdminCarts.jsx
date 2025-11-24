@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../supabaseClient';
-import { ShoppingCart, Eye, Trash2, History, List, FileText } from 'lucide-react';
+import { ShoppingCart, Eye, Trash2, Package, AlertTriangle, History, List, FileText } from 'lucide-react';
 
 const AdminCarts = () => {
     const [carts, setCarts] = useState([]);
@@ -232,8 +232,13 @@ const AdminCarts = () => {
                 </h1>
             </div>
 
-            {/* TABS */}
-            <div className="tabs-container" style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
+            {/* TABS CON FLEXBOX PARA LADO A LADO */}
+            <div className="tabs-container" style={{ 
+                marginBottom: '20px', 
+                borderBottom: '1px solid #ddd',
+                display: 'flex', 
+                gap: '10px' 
+            }}>
                 <button
                     onClick={() => setActiveTab('active')}
                     style={getTabStyle(activeTab === 'active')}
@@ -275,7 +280,7 @@ const AdminCarts = () => {
                     </>
                 )}
             </div>
-            
+
             {/* MODAL */}
             {showModal && selectedCart && (
                 <div

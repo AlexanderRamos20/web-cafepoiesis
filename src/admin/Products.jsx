@@ -74,13 +74,9 @@ const Products = () => {
     };
 
     const filteredProducts = products.filter(p => {
-        // 1. Pestaña LOYVERSE: Solo productos con ID externo
         if (activeTab === 'loyverse') {
             return p.id_loyverse != null;
         }
-
-        // Si tiene ID de Loyverse, NO lo mostramos en las otras pestañas para evitar duplicados visuales
-        if (p.id_loyverse != null && activeTab !== 'todos') return false;
 
         if (activeTab === 'todos') return true;
 
@@ -109,37 +105,37 @@ const Products = () => {
                 )}
             </div>
 
-            <div className="tabs-container" style={{ marginBottom: '20px', borderBottom: '1px solid #ddd' }}>
+            <div className="tabs-container" style={{ 
+                marginBottom: '20px', 
+                borderBottom: '1px solid #ddd',
+                display: 'flex', // <--- FIX: Fuerzo la disposición horizontal
+                gap: '20px' 
+            }}>
                 <button
-                    className={`tab-button ${activeTab === 'todos' ? 'active' : ''}`}
                     onClick={() => setActiveTab('todos')}
                     style={getTabStyle(activeTab === 'todos')}
                 >
                     Todos
                 </button>
                 <button
-                    className={`tab-button ${activeTab === 'cafes_en_grano' ? 'active' : ''}`}
                     onClick={() => setActiveTab('cafes_en_grano')}
                     style={getTabStyle(activeTab === 'cafes_en_grano')}
                 >
                     Cafés en Grano
                 </button>
                 <button
-                    className={`tab-button ${activeTab === 'insumo' ? 'active' : ''}`}
                     onClick={() => setActiveTab('insumo')}
                     style={getTabStyle(activeTab === 'insumo')}
                 >
                     Insumos
                 </button>
                 <button
-                    className={`tab-button ${activeTab === 'loyverse' ? 'active' : ''}`}
                     onClick={() => setActiveTab('loyverse')}
                     style={getTabStyle(activeTab === 'loyverse')}
                 >
                     Loyverse
                 </button>
                 <button
-                    className={`tab-button ${activeTab === 'preparacion' ? 'active' : ''}`}
                     onClick={() => setActiveTab('preparacion')}
                     style={getTabStyle(activeTab === 'preparacion')}
                 >
@@ -175,29 +171,37 @@ const Products = () => {
                                 return (
                                     <tr key={product.id_producto}>
                                         <td>
-                                            <div style={{ position: 'relative', width: '60px', height: '60px' }}>
+                                            <div style={{ width: '60px', height: '60px' }}>
                                                 <img
                                                     src={product.imagen || 'https://placehold.co/60x60'}
                                                     alt={product.nombre}
                                                     className="product-image"
                                                 />
-                                                {isLoyverseItem && (
-                                                    <div style={{ 
-                                                        position: 'absolute', 
-                                                        bottom: '-5px', 
-                                                        right: '-5px', 
-                                                        background: '#FF9800', 
-                                                        borderRadius: '50%', 
-                                                        padding: '3px',
-                                                        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-                                                    }} title="Sincronizado con Loyverse">
-                                                        <Lock size={12} color="white" />
-                                                    </div>
-                                                )}
                                             </div>
                                         </td>
                                         <td>
-                                            {product.nombre}
+                                            {/* Candado movido al lado del nombre (círculo completo) */}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <strong>{product.nombre}</strong>
+                                                {isLoyverseItem && (
+                                                    <span 
+                                                        style={{ 
+                                                            display: 'inline-flex', 
+                                                            alignItems: 'center', 
+                                                            justifyContent: 'center',
+                                                            width: '20px', 
+                                                            height: '20px', 
+                                                            borderRadius: '50%', 
+                                                            backgroundColor: '#FF9800', 
+                                                            color: 'white',
+                                                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                                                        }} 
+                                                        title="Sincronizado con Loyverse"
+                                                    >
+                                                        <Lock size={12} />
+                                                    </span>
+                                                )}
+                                            </div>
                                             {isLoyverseItem && <div style={{ fontSize: '0.7rem', color: '#FF9800' }}>Sincronizado con Loyverse</div>}
                                         </td>
                                         <td>
@@ -297,11 +301,11 @@ const getTabStyle = (isActive) => ({
     padding: '10px 20px', 
     border: 'none', 
     background: 'none', 
+    cursor: 'pointer',
     borderBottom: isActive ? '3px solid #6F4E37' : 'none', 
     fontWeight: isActive ? 'bold' : 'normal', 
     color: isActive ? '#6F4E37' : '#888',
-    cursor: 'pointer',
-    transition: 'all 0.2s'
+    display: 'flex', alignItems: 'center', gap: '8px'
 });
 
 export default Products;
