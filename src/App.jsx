@@ -12,6 +12,7 @@ import Insumos from './Insumos.jsx';
 import Footer from './components/footer.jsx';
 import Preparaciones from './Preparaciones.jsx'; // 1. IMPORTA el nuevo component
 import CallLoyverse from "./components/loyverse.jsx";
+import CallHorariosCache from './components/CallHorariosCache.jsx';
 
 function App() {
   const { media, loading, error } = useInstagramMedia(3);
@@ -45,6 +46,7 @@ function App() {
 
       <main className="app-main">
         <CallLoyverse />
+        <CallHorariosCache />
         <section id="seccion-preparaciones">
           <Preparaciones />
         </section>
