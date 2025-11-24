@@ -24,7 +24,7 @@
   }
 }
 
-/* ==== TARJETA estilo Instagram embed ==== */
+/* ==== TARJETA ==== */
 .ig-card {
   display: flex;
   flex-direction: column;
@@ -37,14 +37,13 @@
   border: 1px solid #e5e7eb;
 }
 
-/* HEADER */
+/* ==== HEADER ==== */
 .ig-card-header {
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
   gap: 0.5rem;
 }
-
 
 .ig-header-text {
   display: flex;
@@ -76,7 +75,7 @@
   white-space: nowrap;
 }
 
-/* MEDIA */
+/* ==== MEDIA ==== */
 .ig-media-link {
   display: block;
 }
@@ -84,29 +83,38 @@
 .ig-media-wrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 5; /* similar a post vertical */
+  aspect-ratio: 4 / 5; /* Formato IG vertical */
   background: #f3f4f6;
+  overflow: hidden; /* 👈 EVITA que el video se salga */
 }
 
-.ig-media-wrapper img {
+/* IMG y VIDEO: siempre ajustan perfectamente */
+.ig-media-wrapper img,
+.ig-media-wrapper video {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* 👈 recorta como hace Instagram */
   display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 
+/* Badge para videos */
 .ig-badge-play {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 2px 8px;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
-  font-size: 0.7rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  z-index: 5;
 }
 
-/* FOOTER */
+/* ==== FOOTER ==== */
 .ig-card-footer {
   padding: 0.75rem 1rem 0.9rem;
   border-top: 1px solid #e5e7eb;
@@ -167,12 +175,8 @@
 }
 
 @keyframes ig-pulse {
-  0% {
-    background-position: 100% 0;
-  }
-  100% {
-    background-position: -100% 0;
-  }
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 /* Mensaje sin posts */
