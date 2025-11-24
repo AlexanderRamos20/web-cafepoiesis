@@ -80,35 +80,39 @@ export default function InstagramFeedLite({
               </a>
             </header>
 
-            <a
-              href={item.permalink}
-              target="_blank"
-              rel="noreferrer"
-              className="ig-media-link"
-            >
-              <div className="ig-media-wrapper">
-                {isVideo ? (
-                  <>
-                    <video
-                      className="ig-video"
-                      src={item.mediaUrl}
-                      poster={item.thumbnailUrl || undefined}
-                      playsInline
-                      muted
-                      loop
-                      controls
-                    />
-                    <span className="ig-badge-play">▶</span>
-                  </>
-                ) : (
+            {isVideo ? (
+              // 👉 VIDEO: sin <a>, solo se reproduce
+              <div className="ig-media-link">
+                <div className="ig-media-wrapper">
+                  <video
+                    className="ig-video"
+                    src={item.mediaUrl}
+                    poster={item.thumbnailUrl || undefined}
+                    playsInline
+                    muted
+                    loop
+                    controls
+                  />
+                  <span className="ig-badge-play">▶</span>
+                </div>
+              </div>
+            ) : (
+              // 👉 IMAGEN: mantiene el link a Instagram
+              <a
+                href={item.permalink}
+                target="_blank"
+                rel="noreferrer"
+                className="ig-media-link"
+              >
+                <div className="ig-media-wrapper">
                   <img
                     src={item.mediaUrl}
                     alt={item.caption || "Publicación de Instagram"}
                     loading="lazy"
                   />
-                )}
-              </div>
-            </a>
+                </div>
+              </a>
+            )}
 
             <footer className="ig-card-footer">
               <a
