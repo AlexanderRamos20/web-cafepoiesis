@@ -1,0 +1,13 @@
+@media (max-width: 576px) {
+
+  .modal-dialog {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+ 
+  .modal-content {
+    border-radius: 18px;
+    margin: 0 8px !important; 
+  }
+}

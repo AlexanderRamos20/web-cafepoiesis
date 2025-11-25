@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { addToCart } from '../firebaseCartService'; 
+import { addToCart } from '../FirebaseCartService'; 
 
 export default function AddToCartControls({ productoId, nombreProducto }) {
     

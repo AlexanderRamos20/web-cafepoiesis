@@ -1,117 +1,160 @@
 .cafes-page-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 2rem 0; 
-}
-
-.coffee-list {
+    /* Al ponerlo transparente, se funde perfectamente con el fondo de la página */
+    background-color: transparent;
+    padding: 40px 20px;
     display: flex;
-    justify-content: center;
-    gap: 40px; 
-    flex-wrap: wrap; 
-    margin-top: 30px;
+    flex-direction: column;
+    align-items: center;
 }
 
+.description {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 30px auto;
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Contenedor del Carrusel limitado */
 .carousel-container-wrapper {
     position: relative;
-    max-width: 1000px; 
-    margin: 0 auto; 
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px; /* Espacio lateral para las flechas */
 }
 
-.carousel-control-prev,
-.carousel-control-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
-    opacity: 1; 
-    background-color: white; 
-    border-radius: 50%; 
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-}
-
-.carousel-control-prev {
-    left: 0; 
-}
-
-.carousel-control-next {
-    right: 0; 
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(0%); 
-    width: 1rem; 
-    height: 1rem;
-}
-
+/* =========================================
+   TARJETAS (Cards)
+   ========================================= */
 .coffee-card-link {
     text-decoration: none;
     color: inherit;
-    display: block; 
-    transition: transform 0.3s ease-in-out, box-shadow 0.3s;
-    max-width: 320px; 
-    width: 100%; 
+    display: block;
+    height: 100%;
+    position: relative;
+    z-index: 1; /* Nivel base para el enlace */
 }
 
 .coffee-card {
-    display: flex;
-    flex-direction: column; 
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
     text-align: center;
-    border: 1px solid #ccc; 
-    border-radius: 10px;
-    padding: 15px; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 100%; 
-    cursor: pointer; 
-    background-color: #fff; 
-    color: #333; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden; 
+}
+
+.coffee-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
 .coffee-image {
-    width: 280px; 
-    height: 280px; 
-    object-fit: cover; 
-    display: block;
-    margin: 0 auto 15px auto; 
-    border-radius: 4px; 
-    background-color: #e0e0e0; 
-}
-
-.coffee-card h3 {
-    font-size: 1.2em;
-    font-weight: 600;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .card-type {
-    font-size: 0.9em;
+    font-size: 0.85rem;
+    text-transform: uppercase;
     color: #888;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #e0e0e0;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #eee;
     padding-bottom: 10px;
+}
+
+h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c2c2c;
+    margin-bottom: 10px;
 }
 
 .price {
-    font-size: 1.1em;
+    font-size: 1.2rem;
     font-weight: bold;
-    color: var(--coffee-dark); 
+    color: #4e342e;
     margin-top: 10px;
-    padding-bottom: 10px;
 }
 
-.coffee-card-link:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+/* =========================================
+   FLECHAS ESTANDARIZADAS (Separadas y al Frente)
+   ========================================= */
+
+/* Estilo Base de la Flecha (Círculo Café con Flecha Blanca) */
+.coffee-carousel .carousel-control-prev-icon,
+.coffee-carousel .carousel-control-next-icon {
+    background-color: #4e342e; 
+    border: 2px solid #ffffff; 
+    border-radius: 50%; 
+    width: 3rem;
+    height: 3rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    /* Flecha SVG BLANCA */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath d='M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z'/%3e%3c/svg%3e") !important;
+    background-size: 50%; 
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 0.9; 
+    transition: all 0.3s ease;
 }
 
+.coffee-carousel .carousel-control-next-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23ffffff'%3e%3cpath d='M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e") !important;
+}
+
+/* Efecto Hover */
+.coffee-carousel .carousel-control-prev:hover .carousel-control-prev-icon,
+.coffee-carousel .carousel-control-next:hover .carousel-control-next-icon {
+    background-color: #2d1b1b;
+    border-color: #ffffff;
+    transform: scale(1.1);
+    opacity: 1;
+}
+
+/* Posicionamiento y Capas */
+.coffee-carousel .carousel-control-prev, 
+.coffee-carousel .carousel-control-next {
+    width: 60px !important;
+    z-index: 1000 !important; /* Encima de todo */
+    opacity: 1;
+}
+
+/* Márgenes negativos para separar flechas */
+.coffee-carousel .carousel-control-prev { 
+    margin-left: -60px; 
+}
+.coffee-carousel .carousel-control-next { 
+    margin-right: -60px; 
+}
+
+.coffee-carousel .carousel-item {
+    padding-bottom: 20px;
+    overflow: visible;
+}
+
+/* Ajuste Móvil */
 @media (max-width: 768px) {
-  .carousel-container-wrapper {
-    max-width: 100%;
-    padding: 0 1rem;
-  }
+    .coffee-carousel .carousel-control-prev { margin-left: -10px; }
+    .coffee-carousel .carousel-control-next { margin-right: -10px; }
+    
+    .coffee-carousel .carousel-control-prev-icon,
+    .coffee-carousel .carousel-control-next-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .carousel-container-wrapper {
+        padding: 0 10px;
+    }
 }

@@ -114,16 +114,30 @@ const AdminCarts = () => {
         }, 0);
     };
 
+    const CHILE_LOCALE = 'es-CL';
+    const CHILE_TIMEZONE = 'America/Santiago';
     const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleString('es-CL', {
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit'
-            });
-        } catch (e) { return 'N/A'; }
-    };
+    if (!dateString) return 'N/A';
+    try {
+        const utcDateString = dateString + 'Z'; 
+        const date = new Date(utcDateString);
+        
+        const formatter = new Intl.DateTimeFormat(CHILE_LOCALE, {
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit',
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false,
+            timeZone: CHILE_TIMEZONE 
+        });
+
+        return formatter.format(date);
+    } catch (e) { 
+        console.error("Error al formatear fecha:", e);
+        return 'N/A'; 
+    }
+};
 
     const getStatusBadge = (estado) => {
         const statusColors = {
@@ -167,13 +181,15 @@ const AdminCarts = () => {
                         </td>
                         <td>{formatDate(cart.fecha_creacion)}</td>
                         <td>{getStatusBadge(cart.estado)}</td>
-                        <td>
+                        <td style={{ textAlign: 'center' }}>
                             <div className="actions">
-                                <button onClick={() => handleViewDetails(cart)} className="btn-secondary" style={{ padding: '0.5rem' }} title="Ver Detalles">
+                                <button onClick={() => handleViewDetails(cart)} className="btn-secondary" title="Ver Detalles">
                                     <Eye size={16} />
+                                    Ver
                                 </button>
-                                <button onClick={() => handleDelete(cart.id_usuario, cart.id_carrito)} className="btn-danger" style={{ padding: '0.5rem' }} title="Eliminar">
+                                <button onClick={() => handleDelete(cart.id_usuario, cart.id_carrito)} className="btn-danger" title="Eliminar">
                                     <Trash2 size={16} />
+                                    Eliminar
                                 </button>
                             </div>
                         </td>
@@ -330,10 +346,13 @@ const AdminCarts = () => {
                             </div>
                         )}
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '1.5rem', gap: '1rem' }}>
-                            <button onClick={() => setShowModal(false)} className="btn-secondary">Cerrar</button>
+                        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
+                            <button onClick={() => setShowModal(false)} className="btn-secondary">
+                                Cerrar
+                            </button>
                             <button onClick={() => handleDelete(selectedCart.id_usuario, selectedCart.id_carrito)} className="btn-danger">
-                                <Trash2 size={16} style={{ marginRight: '5px' }}/> Eliminar Carrito Activo
+                                <Trash2 size={16} />
+                                Eliminar Carrito Activo
                             </button>
                         </div>
                     </div>

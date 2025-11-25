@@ -1,24 +1,29 @@
-import React, { useState } from 'react';
 import { Outlet, Link, useNavigate } from 'react-router-dom';
-import { Package, LogOut, User, ShoppingCart, MessageSquare, Clock } from 'lucide-react';
+import { Package, LogOut, User, ShoppingCart, MessageSquare, Menu, X, Clock } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
 import './AdminLayout.css';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const EDGE_FUNCTION_NAME = 'caching-horario-googleSites'
+const EDGE_FUNCTION_NAME = 'caching-horario-googleSites';
 
 const AdminLayout = () => {
     const navigate = useNavigate();
     const { user, signOut } = useAuth();
-    const [isUpdating, setIsUpdating] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false); // Estado para el menú móvil
+    const [isUpdating, setIsUpdating] = useState(false); // Estado para actualizar horarios
 
     const handleLogout = async () => {
         try {
-            navigate('/');
+            // Navegar primero a la página principal para evitar que ProtectedRoute redirija a /login
+            navigate('/', { replace: true });
+            // Luego cerrar sesión
             await signOut();
         } catch (error) {
-            console.error(error);
+            console.error('Error al cerrar sesión:', error);
+            // Si hay error, igual navegar a la página principal
+            navigate('/', { replace: true });
         }
     };
 
@@ -65,14 +70,28 @@ const AdminLayout = () => {
 
     return (
         <div className="admin-container">
-            <aside className="admin-sidebar">
+            {/* Header Fijo Móvil y Toggle */}
+            <header className="mobile-header">
+                <div className="admin-logo">
+                    <h2>Panel de Administración</h2>
+                    <button 
+                        className="menu-toggle-button" 
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        aria-expanded={isMenuOpen}
+                        aria-label="Toggle Menu"
+                    >
+                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
+            </header>
+            
+            <aside className={`admin-sidebar ${isMenuOpen ? 'open' : ''}`}>
                 <div className="admin-logo">
                     <h2>Panel de Administración</h2>
                     {user && (
-                        <div style={{
+                        <div className="user-info" style={{
                             fontSize: '0.85rem',
                             color: 'rgba(255, 255, 255, 0.7)',
-                            marginTop: '0.5rem',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '0.5rem'
@@ -82,7 +101,7 @@ const AdminLayout = () => {
                         </div>
                     )}
                 </div>
-                <nav className="admin-nav">
+                <nav className="admin-nav" onClick={() => setIsMenuOpen(false)}>
                     <Link to="/admin/productos" className="nav-link">
                         <Package size={20} />
                         Productos
@@ -96,17 +115,19 @@ const AdminLayout = () => {
                         Formularios
                     </Link>
 
+                    {/* Botón de Actualizar Horarios (Funcionalidad del Equipo) */}
                     <button 
                         onClick={handleForceUpdateHorarios} 
                         className={`nav-link ${isUpdating ? 'disabled' : ''}`}
                         disabled={isUpdating}
                         title="Fuerza la actualización inmediata de la caché de horarios desde Google Places."
+                        style={{ cursor: 'pointer', width: '100%', textAlign: 'left' }}
                     >
                         <Clock size={20} />
                         {isUpdating ? 'Actualizando...' : 'Actualizar Horarios'}
                     </button>
-
                 </nav>
+                
                 <div className="admin-footer">
                     <button onClick={handleLogout} className="nav-link logout">
                         <LogOut size={20} />

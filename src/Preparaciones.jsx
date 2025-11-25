@@ -1,11 +1,12 @@
 import React from 'react';
 import { Carousel, Row, Col } from 'react-bootstrap';
 import './Preparaciones.css';
+import { PrevIcon, NextIcon } from './utils/CarouselArrows';
 
 import imgCapuccino from './img/capuccino.jpg';
 import imgEspresso from './img/espresso.jpg';
 import imgFiltrado from './img/CafeFiltrado.jpg';
-import imgEspressoTonic from './img/espressoTonic.jpg';
+import imgEspressoTonic from './img/EspressoTonic.jpg';
 import imgMocaccino from './img/mocaccino.jpg';
 import imgAffogatto from './img/affogato.jpg';
 import imgMatcha from './img/MatchaLatte.jpg';
@@ -35,6 +36,9 @@ const CarouselContent = ({ items, carouselId }) => (
       interval={null} 
       indicators={false} 
       wrap={true} 
+      variant={null}
+      prevIcon={PrevIcon} 
+      nextIcon={NextIcon}
   >
       {items.map((chunk, slideIndex) => (
           <Carousel.Item key={slideIndex}>

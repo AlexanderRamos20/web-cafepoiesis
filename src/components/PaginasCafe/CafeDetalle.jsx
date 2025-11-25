@@ -9,7 +9,7 @@ import Footer from '../footer.jsx';
 import BurbujaCarrito from '../BurbujaCarrito.jsx';
 
 // IMPORTACIÓN DEL SERVICIO
-import { addToCart } from '../../firebaseCartService.js';
+import { addToCart } from '../../FirebaseCartService.js';
 import { supabase } from '../../supabaseClient.js';
 
 export default function CafeDetalle() {
