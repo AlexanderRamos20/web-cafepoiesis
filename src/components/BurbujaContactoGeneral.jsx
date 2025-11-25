@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { Button, Modal, Form, FloatingLabel, Toast, ToastContainer } from "react-bootstrap";
-// CORRECCIÓN: Usamos la ruta relativa estándar sin extensión para mayor compatibilidad
 import { supabase } from '../supabaseClient'; 
+import './BurbujaContactoGeneral.css'; // Importamos los estilos de centrado
 
 export default function BurbujaContactoGeneral(){
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarToast, setMostrarToast] = useState(false);
     const [enviando, setEnviando] = useState(false); 
 
-    // 2. ESTADO ACTUALIZADO CON TELEFONO
+    // Estado del formulario
     const [formData, setFormData] = useState({
         nombre: '',
         email: '',
@@ -27,12 +27,12 @@ export default function BurbujaContactoGeneral(){
         });
     };
 
-    // 3. FUNCIÓN DE ENVÍO
     const enviarFormulario = async (e) => {
         e.preventDefault();
         setEnviando(true);
         
         try {
+            // Mensaje formateado para el admin
             const mensajeFinal = `[CATEGORÍA: ${formData.categoria.toUpperCase()}] \n${formData.mensaje}`;
 
             const { error } = await supabase
@@ -41,14 +41,14 @@ export default function BurbujaContactoGeneral(){
                     {
                         nombre: formData.nombre,
                         correo: formData.email,
-                        telefono: formData.telefono, 
+                        telefono: formData.telefono,
                         mensaje: mensajeFinal,
                     }
                 ]);
 
             if (error) throw error;
 
-            // ÉXITO
+            // Éxito
             setMostrarModal(false);
             setMostrarToast(true);
             setFormData({ nombre: '', email: '', telefono: '', categoria: 'b2b', mensaje: '' }); 
@@ -63,13 +63,13 @@ export default function BurbujaContactoGeneral(){
 
     return(
         <>
-            {/* Burbuja Flotante */}
+            {/* Burbuja Flotante (Izquierda) */}
             <button onClick={abrirModal} 
             className="position-fixed bottom-0 start-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
             style={{
                 width: 64,
                 height: 64,
-                zIndex: 2000,
+                zIndex: 2000, // Aseguramos que flote sobre todo
                 backgroundColor: "#4e342e", 
                 border: "none",
                 cursor: "pointer",
@@ -83,22 +83,34 @@ export default function BurbujaContactoGeneral(){
                 <span style={{fontSize: 24, color: 'white'}}>📧</span>
             </button>
 
-            {/* Formulario Modal */}
-            <Modal show={mostrarModal} onHide={cerrarModal} centered>
-                <Modal.Header closeButton style={{ backgroundColor: '#f8f9fa' }}>
-                    <Modal.Title style={{ fontWeight: 'bold', color: '#4e342e', fontFamily: 'Playfair Display, serif' }}>
+            {/* Formulario Modal - CENTRADO */}
+            <Modal 
+                show={mostrarModal} 
+                onHide={cerrarModal} 
+                // Propiedades clave para el estilo y centrado
+                dialogClassName="contact-modal-dialog" 
+                contentClassName="contact-modal-content"
+                centered // Refuerzo de Bootstrap
+                backdrop="static"
+            >
+                <Modal.Header closeButton className="contact-modal-header">
+                    <Modal.Title className="contact-modal-title">
                         Contáctanos
                     </Modal.Title>
                 </Modal.Header>
                 
                 <Form onSubmit={enviarFormulario}>
-                    <Modal.Body>
+                    <Modal.Body className="px-4 pb-2 pt-0" style={{ backgroundColor: '#fdfbf7' }}>
+                        <p className="text-center text-muted mb-4" style={{ fontSize: '0.9rem' }}>
+                            ¿Tienes dudas o sugerencias? Escríbenos.
+                        </p>
                         
                         <Form.Group className="mb-3" controlId="Nombre">
                             <FloatingLabel label="Nombre y apellido">
                                 <Form.Control 
                                     type="text" placeholder="Tu nombre" required
                                     name="nombre" value={formData.nombre} onChange={handleChange}
+                                    style={{ backgroundColor: '#fff' }}
                                 />
                             </FloatingLabel>
                         </Form.Group>
@@ -108,25 +120,28 @@ export default function BurbujaContactoGeneral(){
                                 <Form.Control 
                                     type="email" placeholder="ejemplo@email.com" required
                                     name="email" value={formData.email} onChange={handleChange}
+                                    style={{ backgroundColor: '#fff' }}
                                 />
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* NUEVO INPUT DE TELÉFONO */}
                         <Form.Group className="mb-3" controlId="Telefono">
                             <FloatingLabel label="Teléfono (Opcional)">
                                 <Form.Control 
                                     type="tel" placeholder="+569..." 
                                     name="telefono" value={formData.telefono} onChange={handleChange}
+                                    style={{ backgroundColor: '#fff' }}
                                 />
                             </FloatingLabel>
                         </Form.Group>
 
                         <Form.Group className="mb-3" controlId="Categoria">
                             <FloatingLabel label="Categoría de Consulta">
-                                <Form.Select required name="categoria" value={formData.categoria} onChange={handleChange}>
+                                <Form.Select 
+                                    required name="categoria" value={formData.categoria} onChange={handleChange}
+                                    style={{ backgroundColor: '#fff' }}
+                                >
                                     <option value="b2b">Consulta B2B / Mayorista</option>
-                                    {/* OPCIONES EXTRA ELIMINADAS (Reclamo, Felicitaciones) */}
                                     <option value="otro">Otro</option>
                                 </Form.Select>
                             </FloatingLabel>
@@ -136,20 +151,24 @@ export default function BurbujaContactoGeneral(){
                             <FloatingLabel label="Tu Mensaje">
                                 <Form.Control
                                     as="textarea" placeholder="Escribe tu mensaje aqui..."
-                                    style={{height: 120}} required
+                                    style={{height: 100, backgroundColor: '#fff'}} required
                                     name="mensaje" value={formData.mensaje} onChange={handleChange}
                                 />
                             </FloatingLabel>
                         </Form.Group>
 
                     </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={cerrarModal}>Cancelar</Button>
+                    
+                    <Modal.Footer className="contact-modal-footer">
+                        <Button variant="outline-secondary" onClick={cerrarModal} className="me-2 px-4 rounded-pill">
+                            Cancelar
+                        </Button>
                         <Button 
                             type="submit" 
                             variant="primary" 
                             disabled={enviando}
-                            style={{ backgroundColor: '#a1887f', borderColor: '#a1887f' }}
+                            className="px-4 rounded-pill shadow-sm"
+                            style={{ backgroundColor: '#a1887f', borderColor: '#a1887f', fontWeight: '600' }}
                         >
                             {enviando ? "Enviando..." : "Enviar Mensaje"}
                         </Button>
@@ -157,7 +176,7 @@ export default function BurbujaContactoGeneral(){
                 </Form>
             </Modal>
 
-            {/* Notificación de éxito amigable */}
+            {/* Notificación de éxito */}
             <ToastContainer position="bottom-end" className="p-3" style={{zIndex: 2050}}>
                 <Toast onClose={() => setMostrarToast(false)} show={mostrarToast} delay={3000} autohide bg="success">
                     <Toast.Header closeButton={false}>
