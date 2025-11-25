@@ -38,8 +38,8 @@ const LoginModal = ({ isOpen, onClose }) => {
     };
 
     return (
-        <div className="modal-backdrop" onClick={handleBackdropClick}>
-            <div className="modal-content">
+        <div className="login-modal-backdrop" onClick={handleBackdropClick}>
+            <div className="login-modal-content">
                 <button className="modal-close" onClick={onClose}>
                     <X size={24} />
                 </button>

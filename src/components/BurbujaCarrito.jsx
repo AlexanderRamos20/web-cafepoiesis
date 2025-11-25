@@ -8,6 +8,7 @@ import {
     submitOrderToSupabase, // <--- IMPORTAR ESTA NUEVA FUNCIÓN
     clearCart              // <--- IMPORTAR ESTA NUEVA FUNCIÓN
 } from "../FirebaseCartService";
+import "./BurbujaCarrito.css"
 
 export default function BurbujaCarrito(){
     const [itemCount, setItemCount] = useState(0);
