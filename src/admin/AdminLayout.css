@@ -4,6 +4,7 @@
     --coffee-light: #A1887F;
 }
 
+/* --- DESKTOP/LARGE SCREEN (Default) --- */
 .admin-container {
     display: flex;
     min-height: 100vh;
@@ -20,52 +21,11 @@
     height: 100vh;
     left: 0;
     top: 0;
+    transition: transform 0.3s ease-out;
+    z-index: 100;
 }
 
-.admin-logo {
-    padding: 2rem 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.admin-logo h2 {
-    margin: 0;
-    font-size: 1.5rem;
-}
-
-.admin-nav {
-    flex: 1;
-    padding: 1rem 0;
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1.5rem;
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: all 0.2s;
-    border: none;
-    background: none;
-    width: 100%;
-    cursor: pointer;
-    font-size: 1rem;
-}
-
-.nav-link:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    color: white;
-}
-
-.nav-link.active {
-    background-color: var(--coffee-primary);
-    color: white;
-}
-
-.admin-footer {
-    padding: 1rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
+.mobile-header { display: none; }
 
 .admin-content {
     margin-left: 250px;
@@ -73,184 +33,340 @@
     padding: 2rem;
 }
 
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
+/* Componentes Generales */
+.admin-logo {
+    padding: 2rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-.page-title {
-    font-size: 2rem;
-    color: var(--coffee-dark);
-    margin: 0;
+.admin-logo h2 { margin: 0; font-size: 1.5rem; }
+.admin-nav { flex: 1; padding: 1rem 0; display: flex; flex-direction: column; }
+.nav-link {
+    display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1.5rem;
+    color: rgba(255, 255, 255, 0.8); text-decoration: none; transition: all 0.2s;
+    border: none; background: none; width: 100%; cursor: pointer; font-size: 1rem;
 }
+.nav-link:hover { background-color: rgba(255, 255, 255, 0.1); color: white; }
+.nav-link.active { background-color: var(--coffee-primary); color: white; }
+.admin-footer { padding: 1rem 0; border-top: 1px solid rgba(255, 255, 255, 0.1); }
 
+/* Header y Títulos */
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.page-title { font-size: 2rem; color: var(--coffee-dark); margin: 0; }
+
+/* Botones */
 .btn-primary {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background-color: var(--coffee-primary);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s;
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem;
+    background-color: var(--coffee-primary); color: white; border: none;
+    border-radius: 8px; cursor: pointer; font-size: 1rem; transition: background-color 0.2s;
 }
-
-.btn-primary:hover:not(:disabled) {
-    background-color: var(--coffee-dark);
-}
-
-.btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-
+.btn-primary:hover:not(:disabled) { background-color: var(--coffee-dark); }
 .btn-secondary {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background-color: #e0e0e0;
-    color: #333;
-    border: none;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    gap: 0.5rem; 
+    padding: 0.6rem 1.2rem;
+    background-color: #f5f5f5; 
+    color: #4e342e; 
+    border: 1px solid #e0e0e0; 
     border-radius: 8px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s;
+    cursor: pointer; 
+    font-size: 0.9rem; 
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
-
 .btn-secondary:hover {
-    background-color: #d0d0d0;
+    background-color: #e8e8e8;
+    border-color: #d0d0d0;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
 }
-
 .btn-danger {
-    display: flex;
-    align-items: center;
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background-color: #d32f2f;
-    color: white;
+    padding: 0.6rem 1.2rem; 
+    background-color: #d32f2f; 
+    color: white; 
     border: none;
-    border-radius: 6px;
-    cursor: pointer;
+    border-radius: 8px; 
+    cursor: pointer; 
     font-size: 0.9rem;
-    transition: background-color 0.2s;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(211, 47, 47, 0.3);
 }
-
 .btn-danger:hover {
     background-color: #b71c1c;
+    box-shadow: 0 4px 8px rgba(211, 47, 47, 0.4);
+    transform: translateY(-1px);
 }
 
+/* Tablas Base */
 .table-container {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: white; border-radius: 12px; padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow-x: auto; 
 }
-
-.products-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
+.products-table { width: 100%; border-collapse: collapse; min-width: 700px; }
 .products-table th {
-    text-align: left;
-    padding: 1rem;
-    border-bottom: 2px solid #e0e0e0;
-    color: var(--coffee-dark);
-    font-weight: 600;
+    text-align: left; padding: 1rem; border-bottom: 2px solid #e0e0e0;
+    color: var(--coffee-dark); font-weight: 600;
 }
-
-.products-table td {
-    padding: 1rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.products-table tr:hover {
-    background-color: #f9f9f9;
+.products-table td { padding: 1rem; border-bottom: 1px solid #f0f0f0; }
+/* Centrar celdas con acciones */
+.products-table td:has(.actions),
+.products-table th:has(+ td .actions) + td { 
+    text-align: center; 
 }
 
 .product-image {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
+    width: 60px; height: 60px; object-fit: cover; border-radius: 8px;
+}
+.actions { 
+    display: flex; 
+    gap: 0.5rem; 
+    justify-content: center;
+    align-items: center;
 }
 
-.status-badge {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 12px;
-    font-size: 0.875rem;
-    font-weight: 500;
+/* Clases de utilidad y Loyverse Base */
+.mobile-grid-button { display: none; }
+.desktop-only-action { display: block; }
+.form-grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+/* Estilos base para nombre y candado */
+.product-name-container {
+    display: flex; 
+    align-items: center; 
+    gap: 8px;
 }
 
-.status-badge.available {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+.loyverse-lock-desktop {
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    width: 20px; 
+    height: 20px; 
+    border-radius: 50%;
+    background-color: #FF9800; 
+    color: white; 
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.status-badge.unavailable {
-    background-color: #ffebee;
-    color: #c62828;
+.loyverse-sync-container {
+    font-size: 0.7rem; 
+    color: #FF9800;
 }
 
-.actions {
-    display: flex;
-    gap: 0.5rem;
+.loyverse-lock-mobile {
+    display: none; /* Oculto por defecto en escritorio */
+    align-items: center; 
+    justify-content: center;
+    width: 16px; 
+    height: 16px; 
+    border-radius: 50%;
+    background-color: #FF9800; 
+    color: white; 
+    margin-right: 4px;
 }
 
-.form-container {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-}
+/* --- MOBILE MEDIA QUERIES (TRANSFORMACIÓN A TARJETAS) --- */
+@media (max-width: 768px) {
+    
+    /* 1. Layout General */
+    .admin-container { flex-direction: column; padding-top: 60px; }
+    .admin-content { margin-left: 0 !important; padding: 1rem 0.5rem; background-color: #f5f5f5; }
 
-.form-group {
-    margin-bottom: 1.5rem;
-}
+    /* Header Fijo y Sidebar */
+    .mobile-header {
+        display: block; width: 100%; height: 60px; position: fixed; top: 0; left: 0;
+        background-color: var(--coffee-dark); z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    
+    .mobile-header .admin-logo {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; /* FIX: Centrado vertical perfecto */
+        padding: 0 1.5rem; /* Aumentado el padding lateral */
+        height: 100%; 
+        border-bottom: none;
+    }
+    
+    .mobile-header .admin-logo h2 { 
+        font-size: 1.1rem; 
+        color: white; 
+        margin: 0; 
+        line-height: 1; /* Evita espacios extra arriba/abajo */
+    }
+    
+    .mobile-header .menu-toggle-button { 
+        background: none; 
+        border: none; 
+        color: white; 
+        cursor: pointer; 
+        padding: 5px;
+        display: flex; /* Para centrar el icono SVG */
+        align-items: center;
+    }
+    
+    /* Sidebar Desplegable */
+    .admin-sidebar {
+        width: 100% !important; height: auto !important; position: fixed !important;
+        top: 60px; left: 0; transform: translateY(-150%); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    }
+    .admin-sidebar.open { transform: translateY(0); }
 
-.form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--coffee-dark);
-    font-weight: 500;
-}
+    /* FIX: Ocultar título redundante DENTRO del sidebar abierto */
+    .admin-sidebar .admin-logo h2 {
+        display: none;
+    }
+    /* Mantenemos el user-info visible y ajustamos padding */
+    .admin-sidebar .admin-logo {
+        padding: 0; 
+        border-bottom: none;
+    }
+    
+    /* Ajuste: Bajar el email del usuario en móvil */
+    .admin-sidebar .admin-logo .user-info {
+        margin-top: 0.75rem;
+        padding-left: 1.5rem;
+    }
 
-.form-input,
-.form-textarea,
-.form-select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #d0d0d0;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-}
+    /* Título y Tabs */
+    .page-header {
+        flex-direction: column; align-items: center !important; justify-content: center;
+        gap: 0.5rem; margin-bottom: 1rem;
+    }
+    .page-title { text-align: center; font-size: 1.8rem; width: 100%; }
+    
+    /* Rejilla de Tabs */
+    .tabs-container {
+        display: grid !important; grid-template-columns: repeat(3, 1fr) !important; 
+        gap: 8px !important; padding-bottom: 0.5rem;
+    }
+    
+    .tabs-container button {
+        padding: 0 !important; 
+        font-size: 0.75rem !important; 
+        height: 44px;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; /* FIX: Centrado horizontal del texto */
+        text-align: center; /* Asegura centrado si el texto salta de línea */
+        width: 100%;
+    }
+    
+    .desktop-only-action { display: none !important; }
+    
+    /* FIX: Botón Nuevo Producto */
+    .mobile-grid-button {
+        display: flex !important; grid-column: span 3; width: 100%; margin-bottom: 5px;
+    }
+    .mobile-grid-button button { 
+        width: 100%; 
+        justify-content: center; /* Centra contenido horizontalmente */
+        align-items: center; /* Centra contenido verticalmente */
+        font-weight: bold; 
+        display: flex;
+    }
 
-.form-input:focus,
-.form-textarea:focus,
-.form-select:focus {
-    outline: none;
-    border-color: var(--coffee-primary);
-}
+    /* --- MAGIA DE TARJETAS PARA LA TABLA --- */
+    
+    .table-container { background: transparent; box-shadow: none; padding: 0; overflow: visible; }
+    .products-table { min-width: 100%; display: block; }
+    .products-table thead { display: none; }
+    .products-table tbody { display: block; }
 
-.form-textarea {
-    min-height: 100px;
-    resize: vertical;
-}
+    /* Tarjeta (TR) */
+    .products-table tr {
+        display: flex; flex-direction: column; align-items: center;
+        background: white; margin-bottom: 1rem; padding: 1.5rem;
+        border-radius: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        border: 1px solid #e0e0e0; text-align: center; position: relative;
+    }
 
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid #e0e0e0;
+    /* Celdas (TD) */
+    .products-table td {
+        display: block; padding: 0.5rem 0; width: 100%;
+        border-bottom: 1px dashed #f0f0f0;
+    }
+    .products-table td:last-child { border-bottom: none; margin-top: 0.5rem; }
+
+    /* IMAGEN CENTRADA Y ARRIBA */
+    .products-table td:first-child { /* La celda de la imagen */
+        display: flex;
+        justify-content: center;
+        order: -1; 
+        border-bottom: none; 
+    }
+    
+    .product-image {
+        width: 120px; height: 120px;
+        border-radius: 50%; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        margin-bottom: 0.5rem;
+    }
+
+    /* CENTRADO DE NOMBRE Y CANDADO MÓVIL */
+    .product-name-container { 
+        justify-content: center; 
+    }
+    
+    .loyverse-lock-desktop { display: none !important; }
+    
+    .loyverse-sync-container {
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        margin-top: 4px;
+    }
+    .loyverse-lock-mobile { display: inline-flex !important; }
+
+    /* Botones de acción */
+    .actions { 
+        justify-content: center; 
+        gap: 0.75rem; 
+        margin-top: 0.5rem; 
+        flex-wrap: wrap;
+    }
+    .btn-secondary, .btn-danger { 
+        padding: 0.7rem 1rem; 
+        min-width: 100px; 
+        justify-content: center;
+        font-size: 0.85rem;
+    }
+
+    /* Formularios */
+    .form-grid-2-col { grid-template-columns: 1fr !important; }
+    .form-container { padding: 1.5rem; }
+    
+    /* Estilos móviles para categoría y mensaje del formulario */
+    .form-category-container {
+        margin-bottom: 1rem !important;
+    }
+    
+    .form-category-badge {
+        display: block !important;
+        width: 100% !important;
+        padding: 0.75rem !important;
+        border-radius: 8px !important;
+        font-size: 0.9rem !important;
+        text-align: center !important;
+    }
+    
+    .form-message-container {
+        text-align: center !important;
+    }
+    
+    .form-message-label {
+        display: none !important;
+    }
+    
+    .form-message-text {
+        text-align: center !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 }
