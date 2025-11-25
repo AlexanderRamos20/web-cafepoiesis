@@ -84,6 +84,33 @@ const AdminForms = () => {
         }
     };
 
+    // Función para extraer la categoría del mensaje
+    const extractCategory = (mensaje) => {
+        if (!mensaje) return null;
+        const match = mensaje.match(/\[CATEGORÍA:\s*([^\]]+)\]/i);
+        if (match) {
+            return match[1].trim();
+        }
+        return null;
+    };
+
+    // Función para limpiar el mensaje (quitar la categoría)
+    const cleanMessage = (mensaje) => {
+        if (!mensaje) return '';
+        return mensaje.replace(/\[CATEGORÍA:\s*[^\]]+\]\s*\n?/i, '').trim();
+    };
+
+    // Función para formatear el nombre de la categoría
+    const formatCategoryName = (category) => {
+        if (!category) return '';
+        const categoryMap = {
+            'b2b': 'Consulta B2B / Mayorista',
+            'reclamo': 'Reclamo',
+            'otro': 'Otro'
+        };
+        return categoryMap[category.toLowerCase()] || category;
+    };
+
     if (loading) {
         return <div>Cargando formularios...</div>;
     }
@@ -139,12 +166,11 @@ const AdminForms = () => {
                                 }}>
                                     {form.mensaje}
                                 </td>
-                                <td>
+                                <td style={{ textAlign: 'center' }}>
                                     <div className="actions">
                                         <button
                                             onClick={() => handleViewDetails(form)}
                                             className="btn-secondary"
-                                            style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
                                             title="Ver detalles completos"
                                         >
                                             <Eye size={16} />
@@ -236,21 +262,44 @@ const AdminForms = () => {
                             )}
                         </div>
 
-                        <div style={{
+                        {/* Categoría centrada sobre el mensaje */}
+                        {extractCategory(selectedForm.mensaje) && (
+                            <div className="form-category-container" style={{
+                                textAlign: 'center',
+                                marginBottom: '1rem'
+                            }}>
+                                <span className="form-category-badge" style={{
+                                    display: 'inline-block',
+                                    padding: '0.5rem 1.5rem',
+                                    backgroundColor: '#e3f2fd',
+                                    color: '#1976d2',
+                                    borderRadius: '20px',
+                                    fontSize: '0.85rem',
+                                    fontWeight: '600',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.5px',
+                                    border: '1px solid #90caf9'
+                                }}>
+                                    {formatCategoryName(extractCategory(selectedForm.mensaje))}
+                                </span>
+                            </div>
+                        )}
+
+                        <div className="form-message-container" style={{
                             backgroundColor: '#f9fafb',
                             padding: '1rem',
                             borderRadius: '8px',
                             marginBottom: '1.5rem'
                         }}>
-                            <strong style={{ display: 'block', marginBottom: '0.5rem', color: '#4e342e' }}>
+                            <strong className="form-message-label" style={{ display: 'block', marginBottom: '0.5rem', color: '#4e342e' }}>
                                 Mensaje:
                             </strong>
-                            <p style={{ margin: 0, lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
-                                {selectedForm.mensaje}
+                            <p className="form-message-text" style={{ margin: 0, lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+                                {cleanMessage(selectedForm.mensaje)}
                             </p>
                         </div>
 
-                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <button
                                 onClick={() => setShowModal(false)}
                                 className="btn-secondary"

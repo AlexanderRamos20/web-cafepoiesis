@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Carousel, Row, Col, Button } from 'react-bootstrap'; 
 import './Insumos.css'; 
-import { addToCart, getProductQuantity } from './firebaseCartService'; 
+import { addToCart, getProductQuantity } from './FirebaseCartService'; 
 import { supabase } from './supabaseClient'; 
 
 const chunkArray = (array, size) => {

@@ -5,7 +5,7 @@ import './Preparaciones.css';
 import imgCapuccino from './img/capuccino.jpg';
 import imgEspresso from './img/espresso.jpg';
 import imgFiltrado from './img/CafeFiltrado.jpg';
-import imgEspressoTonic from './img/espressoTonic.jpg';
+import imgEspressoTonic from './img/EspressoTonic.jpg';
 import imgMocaccino from './img/mocaccino.jpg';
 import imgAffogatto from './img/affogato.jpg';
 import imgMatcha from './img/MatchaLatte.jpg';

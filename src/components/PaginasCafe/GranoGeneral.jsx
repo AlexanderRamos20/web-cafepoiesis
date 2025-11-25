@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './GranoGeneral.css'; 
 import { Carousel, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; 
-import { getCartDetails } from '../../firebaseCartService'; 
+import { getCartDetails } from '../../FirebaseCartService'; 
 import { supabase } from '../../supabaseClient'; 
 
 const chunkArray = (array, size) => {

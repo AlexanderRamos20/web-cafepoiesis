@@ -7,7 +7,7 @@ import {
     removeFromCart,
     submitOrderToSupabase, // <--- IMPORTAR ESTA NUEVA FUNCIÓN
     clearCart              // <--- IMPORTAR ESTA NUEVA FUNCIÓN
-} from "../firebaseCartService";
+} from "../FirebaseCartService";
 
 export default function BurbujaCarrito(){
     const [itemCount, setItemCount] = useState(0);
