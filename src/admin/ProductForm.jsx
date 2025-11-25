@@ -161,17 +161,30 @@ const ProductForm = () => {
 
     return (
         <div>
-            <div className="page-header">
-                <h1 className="page-title">{isEditMode ? 'Editar Producto' : 'Nuevo Producto'}</h1>
+            {/* Botón Volver - Móvil: arriba del título */}
+            <div className="product-form-back-mobile">
                 <button onClick={() => navigate('/admin/productos')} className="btn-secondary">
                     <ArrowLeft size={20} />
                     Volver
                 </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="form-container">
+            <div className="page-header">
+                <h1 className="page-title">{isEditMode ? 'Editar Producto' : 'Nuevo Producto'}</h1>
+            </div>
+
+            {/* Botón Volver - Desktop: arriba del formulario, esquina derecha */}
+            <div className="product-form-wrapper">
+                <div className="product-form-back-desktop">
+                    <button onClick={() => navigate('/admin/productos')} className="btn-secondary">
+                        <ArrowLeft size={20} />
+                        Volver
+                    </button>
+                </div>
+
+                <form onSubmit={handleSubmit} className="form-container">
                 <div className="form-group">
-                    <label className="form-label">Nombre</label>
+                    <label className="form-label">Nombre *</label>
                     <input
                         type="text"
                         name="nombre"
@@ -179,6 +192,7 @@ const ProductForm = () => {
                         value={formData.nombre}
                         onChange={handleChange}
                         required
+                        placeholder="Ej: Café Colombia Finca La Esperanza"
                     />
                 </div>
 
@@ -189,12 +203,13 @@ const ProductForm = () => {
                         className="form-textarea"
                         value={formData.descripcion || ''}
                         onChange={handleChange}
+                        placeholder="Describe el producto..."
                     />
                 </div>
 
-                <div className="form-grid-2-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div className="form-grid-2-col">
                     <div className="form-group">
-                        <label className="form-label">Precio</label>
+                        <label className="form-label">Precio *</label>
                         <input
                             type="number"
                             name="precio"
@@ -204,11 +219,12 @@ const ProductForm = () => {
                             min="0"
                             step="0.01"
                             required
+                            placeholder="0.00"
                         />
                     </div>
 
                     <div className="form-group">
-                        <label className="form-label">Tipo de Producto</label>
+                        <label className="form-label">Tipo de Producto *</label>
                         <select
                             name="tipo_producto"
                             className="form-select"
@@ -232,27 +248,27 @@ const ProductForm = () => {
                         className="form-input"
                         value={formData.imagen}
                         onChange={handleChange}
-                        placeholder="https://..."
+                        placeholder="https://ejemplo.com/imagen.jpg"
                     />
                 </div>
 
                 <div className="form-group">
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <label className="form-checkbox-container">
                         <input
                             type="checkbox"
                             name="mostrar"
                             checked={formData.mostrar}
                             onChange={handleChange}
                         />
-                        Mostrar Producto
+                        <span>Mostrar Producto en la tienda</span>
                     </label>
                 </div>
 
                 {(formData.tipo_producto === 'cafes_en_grano' || (formData.tipo_producto && formData.tipo_producto.includes('café en grano'))) && (
-                    <div style={{ marginTop: '2rem', borderTop: '1px solid #e2e8f0', paddingTop: '1rem' }}>
-                        <h3 style={{ marginBottom: '1rem', color: 'var(--coffee-primary)' }}>Detalles del Café</h3>
+                    <div className="form-section">
+                        <h3 className="form-section-title">Detalles del Café</h3>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="form-grid-2-col">
                             <div className="form-group">
                                 <label className="form-label">Origen</label>
                                 <input
@@ -261,6 +277,7 @@ const ProductForm = () => {
                                     className="form-input"
                                     value={formData.origen || ''}
                                     onChange={handleChange}
+                                    placeholder="Ej: Colombia, Caldas"
                                 />
                             </div>
 
@@ -272,11 +289,12 @@ const ProductForm = () => {
                                     className="form-input"
                                     value={formData.altura_metros || ''}
                                     onChange={handleChange}
+                                    placeholder="Ej: 1800"
                                 />
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                        <div className="form-grid-2-col">
                             <div className="form-group">
                                 <label className="form-label">Proceso / Beneficio</label>
                                 <input
@@ -285,6 +303,7 @@ const ProductForm = () => {
                                     className="form-input"
                                     value={formData.proceso_beneficio || ''}
                                     onChange={handleChange}
+                                    placeholder="Ej: Lavado, Natural"
                                 />
                             </div>
 
@@ -296,6 +315,7 @@ const ProductForm = () => {
                                     className="form-input"
                                     value={formData.variedad || ''}
                                     onChange={handleChange}
+                                    placeholder="Ej: Caturra, Typica"
                                 />
                             </div>
                         </div>
@@ -307,7 +327,7 @@ const ProductForm = () => {
                                 className="form-textarea"
                                 value={formData.notas_cata || ''}
                                 onChange={handleChange}
-                                placeholder="Chocolate, Frutos rojos..."
+                                placeholder="Chocolate, Frutos rojos, Caramelo..."
                             />
                         </div>
                     </div>
@@ -323,6 +343,7 @@ const ProductForm = () => {
                     </button>
                 </div>
             </form>
+            </div>
         </div>
     );
 };

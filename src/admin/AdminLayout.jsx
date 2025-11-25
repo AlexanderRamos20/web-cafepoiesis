@@ -16,10 +16,14 @@ const AdminLayout = () => {
 
     const handleLogout = async () => {
         try {
+            // Navegar primero a la página principal para evitar que ProtectedRoute redirija a /login
+            navigate('/', { replace: true });
+            // Luego cerrar sesión
             await signOut();
-            navigate('/');
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
+            // Si hay error, igual navegar a la página principal
+            navigate('/', { replace: true });
         }
     };
 
