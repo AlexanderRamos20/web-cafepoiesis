@@ -114,16 +114,30 @@ const AdminCarts = () => {
         }, 0);
     };
 
+    const CHILE_LOCALE = 'es-CL';
+    const CHILE_TIMEZONE = 'America/Santiago';
     const formatDate = (dateString) => {
-        if (!dateString) return 'N/A';
-        try {
-            const date = new Date(dateString);
-            return date.toLocaleString('es-CL', {
-                year: 'numeric', month: '2-digit', day: '2-digit',
-                hour: '2-digit', minute: '2-digit'
-            });
-        } catch (e) { return 'N/A'; }
-    };
+    if (!dateString) return 'N/A';
+    try {
+        const utcDateString = dateString + 'Z'; 
+        const date = new Date(utcDateString);
+        
+        const formatter = new Intl.DateTimeFormat(CHILE_LOCALE, {
+            year: 'numeric', 
+            month: '2-digit', 
+            day: '2-digit',
+            hour: '2-digit', 
+            minute: '2-digit',
+            hour12: false,
+            timeZone: CHILE_TIMEZONE 
+        });
+
+        return formatter.format(date);
+    } catch (e) { 
+        console.error("Error al formatear fecha:", e);
+        return 'N/A'; 
+    }
+};
 
     const getStatusBadge = (estado) => {
         const statusColors = {

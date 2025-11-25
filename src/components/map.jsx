@@ -27,7 +27,8 @@ const DecorativeCardHeader = ({ title, icon: IconComponent }) => (
             fontSize: '1.5rem', 
             display: 'flex', 
             alignItems: 'center', 
-            justifyContent: 'center' 
+            justifyContent: 'center', 
+            color: 'white'
         }}>
             {IconComponent && <IconComponent size={20} className="me-2" style={{ color: 'white' }}/>} 
             {title}
@@ -98,18 +99,18 @@ function Mapa() {
 
     return (
         <section className="container py-5">
-            <div className="row d-flex align-items-start"> 
+            <div className="row d-flex align-items-stretch"> 
                 
                 <div className="col-md-6 mb-4 mb-md-0">                    
                     <div className="card shadow-lg p-0 overflow-hidden border-0" 
                          style={{ borderRadius: CARD_RADIUS, borderColor: COLOR_ACCENT }}> 
                          
-                        <DecorativeCardHeader title="UBICACIÓN" icon={null} />
+                        <DecorativeCardHeader title="Ubicación" icon={null} />
 
                         <div className="card-body p-0">
                             <iframe 
                                 width="100%" 
-                                height="400" 
+                                height="300" 
                                 style={{ border: 0 }} 
                                 loading="lazy" 
                                 allowFullScreen 
@@ -124,7 +125,7 @@ function Mapa() {
                     <div className="card shadow-lg h-100 border-0 overflow-hidden" 
                          style={{ borderRadius: CARD_RADIUS, backgroundColor: '#fff' }}> 
                         
-                        <DecorativeCardHeader title="HORARIO DE ATENCIÓN" icon={Clock} />
+                        <DecorativeCardHeader title="Horario de atención" icon={Clock} />
 
                         <div className="card-body d-flex flex-column justify-content-center p-4">
                             
@@ -136,7 +137,7 @@ function Mapa() {
                             )}
 
                             {!loading && (
-                                <div className="text-start mx-auto w-100 p-3" style={{ maxWidth: '350px' }}> 
+                                <div className="text-start mx-auto w-100 p-2" style={{ maxWidth: '350px' }}> 
                                     {DIAS_SEMANA_ORDEN.map(renderHorarioFila)}
                                 </div>
                             )}

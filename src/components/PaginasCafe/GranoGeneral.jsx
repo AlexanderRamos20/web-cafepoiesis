@@ -4,6 +4,8 @@ import { Carousel, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom'; 
 import { getCartDetails } from '../../FirebaseCartService'; 
 import { supabase } from '../../supabaseClient'; 
+import { PrevIcon, NextIcon } from '../../utils/CarouselArrows';
+
 
 const chunkArray = (array, size) => {
     const chunkedArr = [];
@@ -13,7 +15,7 @@ const chunkArray = (array, size) => {
     return chunkedArr;
 };
 
-// --- COMPONENTE TARJETA ---
+// --- COMPONENTE TARJETA (Sin cambios) ---
 const CoffeeCard = ({ coffee }) => {
     const [qty, setQty] = useState(0);
 
@@ -76,9 +78,16 @@ const CoffeeCard = ({ coffee }) => {
     );
 };
 
-// --- CARRUSEL ---
+
 const CarouselContent = ({ items, carouselId }) => (
-    <Carousel interval={null} indicators={false} wrap={true} variant="dark">
+    <Carousel 
+        interval={null} 
+        indicators={false} 
+        wrap={true} 
+        variant={null} 
+        prevIcon={PrevIcon} 
+        nextIcon={NextIcon}
+    >
         {items.map((chunk, slideIndex) => (
             <Carousel.Item key={slideIndex}>
                 <Row className="justify-content-center g-4 py-3"> 
@@ -106,11 +115,8 @@ function GranoGeneral() {
                         *,
                         cafes_en_grano!inner (*) 
                     `) 
-                    // ^^^ EL TRUCO ES '!inner': Esto obliga a que el producto TENGA que existir 
-                    // en la tabla 'cafes_en_grano'. Si no existe ahí, no lo trae.
-                    
-                    .eq('mostrar', true)     // Filtro de visibilidad
-                    .eq('disponible', true); // Filtro de stock/disponibilidad
+                    .eq('mostrar', true) 
+                    .eq('disponible', true);
 
                 if (error) throw error;
 

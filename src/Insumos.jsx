@@ -3,6 +3,7 @@ import { Carousel, Row, Col, Button } from 'react-bootstrap';
 import './Insumos.css'; 
 import { addToCart, getProductQuantity } from './FirebaseCartService'; 
 import { supabase } from './supabaseClient'; 
+import { PrevIcon, NextIcon } from './utils/CarouselArrows';
 
 const chunkArray = (array, size) => {
     const chunkedArr = [];
@@ -84,7 +85,8 @@ const InsumoCard = ({ item }) => {
 };
 
 const CarouselContent = ({ items }) => (
-    <Carousel interval={null} indicators={false} wrap={true} variant="dark">
+    <Carousel interval={null} indicators={false} wrap={true} variant={null} prevIcon={PrevIcon} 
+        nextIcon={NextIcon}>
         {items.map((chunk, i) => (
             <Carousel.Item key={i}>
                 <Row className="justify-content-center g-4 px-3 py-2"> 

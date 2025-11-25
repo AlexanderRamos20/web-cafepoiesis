@@ -1,4 +1,4 @@
-.modal-backdrop {
+.login-modal-backdrop {
     position: fixed;
     top: 0;
     left: 0;
@@ -22,7 +22,7 @@
     }
 }
 
-.modal-content {
+.login-modal-content {
     background: white;
     border-radius: 16px;
     padding: 2.5rem;
