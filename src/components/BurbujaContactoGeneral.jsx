@@ -1,25 +1,25 @@
 import { useState } from "react";
 import { Button, Modal, Form, FloatingLabel, Toast, ToastContainer } from "react-bootstrap";
-// 1. IMPORTAMOS SUPABASE
+// CORRECCIÓN: Usamos la ruta relativa estándar sin extensión para mayor compatibilidad
 import { supabase } from '../supabaseClient'; 
 
 export default function BurbujaContactoGeneral(){
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarToast, setMostrarToast] = useState(false);
-    const [enviando, setEnviando] = useState(false); // Para desactivar botón mientras envía
+    const [enviando, setEnviando] = useState(false); 
 
-    // 2. ESTADO PARA GUARDAR LOS DATOS DEL FORMULARIO
+    // 2. ESTADO ACTUALIZADO CON TELEFONO
     const [formData, setFormData] = useState({
         nombre: '',
         email: '',
-        categoria: 'b2b', // Valor por defecto
+        telefono: '', 
+        categoria: 'b2b',
         mensaje: ''
     });
 
     const abrirModal = () => setMostrarModal(true);
     const cerrarModal = () => setMostrarModal(false);
 
-    // Función para capturar lo que escribe el usuario
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -27,24 +27,22 @@ export default function BurbujaContactoGeneral(){
         });
     };
 
-    // 3. FUNCIÓN DE ENVÍO A SUPABASE
+    // 3. FUNCIÓN DE ENVÍO
     const enviarFormulario = async (e) => {
         e.preventDefault();
         setEnviando(true);
         
         try {
-            // Preparamos el mensaje combinando Categoría + Texto
-            // Así el admin sabe de qué se trata sin cambiar la base de datos
             const mensajeFinal = `[CATEGORÍA: ${formData.categoria.toUpperCase()}] \n${formData.mensaje}`;
 
             const { error } = await supabase
-                .from('formulario_contacto') // Nombre de la tabla
+                .from('formulario_contacto') 
                 .insert([
                     {
                         nombre: formData.nombre,
                         correo: formData.email,
+                        telefono: formData.telefono, 
                         mensaje: mensajeFinal,
-                        // telefono: dejaremos null porque este form no lo pide
                     }
                 ]);
 
@@ -53,7 +51,7 @@ export default function BurbujaContactoGeneral(){
             // ÉXITO
             setMostrarModal(false);
             setMostrarToast(true);
-            setFormData({ nombre: '', email: '', categoria: 'b2b', mensaje: '' }); // Limpiar
+            setFormData({ nombre: '', email: '', telefono: '', categoria: 'b2b', mensaje: '' }); 
 
         } catch (error) {
             console.error("Error enviando:", error);
@@ -65,87 +63,81 @@ export default function BurbujaContactoGeneral(){
 
     return(
         <>
-            {/* Burbuja Flotante (IZQUIERDA) */}
+            {/* Burbuja Flotante */}
             <button onClick={abrirModal} 
             className="position-fixed bottom-0 start-0 m-4 rounded-circle shadow-lg d-flex align-items-center justify-content-center"
             style={{
                 width: 64,
                 height: 64,
-                zIndex: 1050,
+                zIndex: 2000,
                 backgroundColor: "#4e342e", 
                 border: "none",
                 cursor: "pointer",
+                transition: "transform 0.2s"
             }}
             aria-label={"Contacto General"}
             title="Formulario de Contacto Empresarial"
+            onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+            onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
             >
                 <span style={{fontSize: 24, color: 'white'}}>📧</span>
             </button>
 
             {/* Formulario Modal */}
             <Modal show={mostrarModal} onHide={cerrarModal} centered>
-                <Modal.Header closeButton>
-                    <Modal.Title>Formulario de Contacto Empresarial</Modal.Title>
+                <Modal.Header closeButton style={{ backgroundColor: '#f8f9fa' }}>
+                    <Modal.Title style={{ fontWeight: 'bold', color: '#4e342e', fontFamily: 'Playfair Display, serif' }}>
+                        Contáctanos
+                    </Modal.Title>
                 </Modal.Header>
                 
                 <Form onSubmit={enviarFormulario}>
                     <Modal.Body>
                         
-                        {/* NOMBRE */}
                         <Form.Group className="mb-3" controlId="Nombre">
                             <FloatingLabel label="Nombre y apellido">
                                 <Form.Control 
-                                    type="text" 
-                                    placeholder="Tu nombre" 
-                                    required
-                                    name="nombre"
-                                    value={formData.nombre}
-                                    onChange={handleChange}
+                                    type="text" placeholder="Tu nombre" required
+                                    name="nombre" value={formData.nombre} onChange={handleChange}
                                 />
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* EMAIL */}
                         <Form.Group className="mb-3" controlId="Email">
-                            <FloatingLabel label="Correo electronico">
+                            <FloatingLabel label="Correo electrónico">
                                 <Form.Control 
-                                    type="email" 
-                                    placeholder="ejemplo@email.com" 
-                                    required
-                                    name="email"
-                                    value={formData.email}
-                                    onChange={handleChange}
+                                    type="email" placeholder="ejemplo@email.com" required
+                                    name="email" value={formData.email} onChange={handleChange}
                                 />
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* CATEGORÍA */}
+                        {/* NUEVO INPUT DE TELÉFONO */}
+                        <Form.Group className="mb-3" controlId="Telefono">
+                            <FloatingLabel label="Teléfono (Opcional)">
+                                <Form.Control 
+                                    type="tel" placeholder="+569..." 
+                                    name="telefono" value={formData.telefono} onChange={handleChange}
+                                />
+                            </FloatingLabel>
+                        </Form.Group>
+
                         <Form.Group className="mb-3" controlId="Categoria">
                             <FloatingLabel label="Categoría de Consulta">
-                                <Form.Select 
-                                    required
-                                    name="categoria"
-                                    value={formData.categoria}
-                                    onChange={handleChange}
-                                >
+                                <Form.Select required name="categoria" value={formData.categoria} onChange={handleChange}>
                                     <option value="b2b">Consulta B2B / Mayorista</option>
-                                    <option value="reclamo">Reclamo</option>
+                                    {/* OPCIONES EXTRA ELIMINADAS (Reclamo, Felicitaciones) */}
                                     <option value="otro">Otro</option>
                                 </Form.Select>
                             </FloatingLabel>
                         </Form.Group>
 
-                        {/* MENSAJE */}
                         <Form.Group controlId="mensaje">
-                            <FloatingLabel label="Mensaje">
+                            <FloatingLabel label="Tu Mensaje">
                                 <Form.Control
-                                    as="textarea"
-                                    placeholder="Escribe tu mensaje aqui..."
-                                    style={{height: 120}}
-                                    required
-                                    name="mensaje"
-                                    value={formData.mensaje}
-                                    onChange={handleChange}
+                                    as="textarea" placeholder="Escribe tu mensaje aqui..."
+                                    style={{height: 120}} required
+                                    name="mensaje" value={formData.mensaje} onChange={handleChange}
                                 />
                             </FloatingLabel>
                         </Form.Group>
@@ -159,14 +151,14 @@ export default function BurbujaContactoGeneral(){
                             disabled={enviando}
                             style={{ backgroundColor: '#a1887f', borderColor: '#a1887f' }}
                         >
-                            {enviando ? "Enviando..." : "Enviar"}
+                            {enviando ? "Enviando..." : "Enviar Mensaje"}
                         </Button>
                     </Modal.Footer>
                 </Form>
             </Modal>
 
-            {/* Notificación de envío exitoso */}
-            <ToastContainer position="bottom-end" className="p-3" style={{zIndex: 1060}}>
+            {/* Notificación de éxito amigable */}
+            <ToastContainer position="bottom-end" className="p-3" style={{zIndex: 2050}}>
                 <Toast onClose={() => setMostrarToast(false)} show={mostrarToast} delay={3000} autohide bg="success">
                     <Toast.Header closeButton={false}>
                         <strong className="me-auto">Café Poiesis</strong>
