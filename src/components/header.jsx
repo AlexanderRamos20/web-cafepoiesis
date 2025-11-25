@@ -86,7 +86,7 @@ const Header = () => {
                 fontSize: '1.5rem',
                 letterSpacing: '1px'
             }}>
-              CaféPoiesis
+              Cafépoiesis
             </span>
           </Navbar.Brand>
 
